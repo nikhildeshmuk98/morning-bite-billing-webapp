@@ -1,0 +1,2651 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiffin Shop Analytics Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #3498db;
+            --primary-light: #5dade2;
+            --secondary: #2c3e50;
+            --secondary-light: #34495e;
+            --accent: #2ecc71;
+            --accent-light: #58d68d;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --success: #27ae60;
+            --info: #9b59b6;
+            --dark: #1a252f;
+            --darker: #0e1419;
+            --light: #f8f9fa;
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glow: rgba(52, 152, 219, 0.6);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            animation: magicalEntrance 0.8s ease-out;
+        }
+
+        @keyframes magicalEntrance {
+            0% { 
+                opacity: 0; 
+                transform: translateY(30px) scale(0.98);
+                filter: blur(10px);
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        /* Magical Particle Background */
+        .particle-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary-light) 0%, transparent 70%);
+            opacity: 0.3;
+            animation: floatParticle 20s infinite linear;
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Glowing Orbs */
+        .glowing-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.1;
+            animation: pulseOrb 4s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            top: 10%;
+            right: 10%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--accent);
+            bottom: 10%;
+            left: 10%;
+            animation-delay: 1s;
+        }
+
+        .orb-3 {
+            width: 250px;
+            height: 250px;
+            background: var(--info);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: 2s;
+        }
+
+        @keyframes pulseOrb {
+            0%, 100% { transform: scale(1); opacity: 0.1; }
+            50% { transform: scale(1.1); opacity: 0.15; }
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 25px;
+            position: relative;
+            background: linear-gradient(90deg, rgba(52, 152, 219, 0.1), rgba(46, 204, 113, 0.05));
+            border-bottom: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+        }
+
+        .back-btn {
+            width: 60px;
+            height: 60px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--primary-light);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-right: 20px;
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+            animation: pulse 2s infinite;
+        }
+
+        .back-btn:hover {
+            transform: translateX(-5px) scale(1.1);
+            border-color: var(--primary);
+            box-shadow: 0 10px 25px rgba(52, 152, 219, 0.4), 0 0 20px var(--glow);
+            animation: none;
+        }
+
+        .header-info {
+            flex: 1;
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 5px;
+            text-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+            animation: textGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes textGlow {
+            0% { text-shadow: 0 5px 15px rgba(52, 152, 219, 0.3); }
+            100% { text-shadow: 0 5px 25px rgba(52, 152, 219, 0.5), 0 0 30px rgba(52, 152, 219, 0.2); }
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid rgba(46, 204, 113, 0.5);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            animation: pulseLive 2s infinite;
+        }
+
+        @keyframes pulseLive {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* System Check */
+        .system-check {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 25px;
+            animation: slideUp 0.6s ease 0.2s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes slideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .system-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 25px;
+            transition: all 0.3s;
+        }
+
+        .system-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .system-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .system-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .system-icon.loading {
+            background: rgba(243, 156, 18, 0.2);
+            color: var(--warning);
+            border: 1px solid rgba(243, 156, 18, 0.5);
+        }
+
+        .system-icon.connected {
+            background: rgba(46, 204, 113, 0.2);
+            color: var(--accent);
+            border: 1px solid rgba(46, 204, 113, 0.5);
+            animation: pulseSuccess 2s infinite;
+        }
+
+        .system-icon.error {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--danger);
+            border: 1px solid rgba(231, 76, 60, 0.5);
+        }
+
+        .system-content h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .system-content p {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 25px 50px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+            display: none;
+            animation: slideUp 0.6s ease 0.4s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .stat-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px var(--glow);
+        }
+
+        .stat-card:nth-child(1)::after {
+            background: linear-gradient(to bottom, var(--primary), var(--primary-light));
+        }
+        .stat-card:nth-child(2)::after {
+            background: linear-gradient(to bottom, var(--accent), var(--accent-light));
+        }
+        .stat-card:nth-child(3)::after {
+            background: linear-gradient(to bottom, var(--warning), #f7dc6f);
+        }
+        .stat-card:nth-child(4)::after {
+            background: linear-gradient(to bottom, var(--info), #bb8fce);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .stat-title {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            font-size: 28px;
+            color: var(--primary);
+            background: rgba(52, 152, 219, 0.1);
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-value {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            width: fit-content;
+        }
+
+        .stat-change.positive {
+            color: var(--accent);
+        }
+
+        .stat-change.negative {
+            color: var(--danger);
+        }
+
+        /* Time Period Selector */
+        .time-selector {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            display: none;
+            animation: slideUp 0.6s ease 0.6s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .time-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .time-header h2 {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .time-header h2 i {
+            color: var(--primary);
+        }
+
+        .period-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .period-btn {
+            padding: 12px 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .period-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .period-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-color: var(--primary);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .custom-range {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            display: none;
+        }
+
+        .custom-range.show {
+            display: flex;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .date-input {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            min-width: 180px;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .apply-btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        .apply-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(46, 204, 113, 0.6);
+        }
+
+        /* Charts Section */
+        .charts-section {
+            display: none;
+            animation: slideUp 0.6s ease 0.8s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-header h3 {
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary-light);
+        }
+
+        .chart-header h3 i {
+            color: var(--primary);
+        }
+
+        .chart-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chart-action-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chart-action-btn:hover {
+            background: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .chart-container {
+            position: relative;
+            flex: 1;
+            width: 100%;
+        }
+
+        /* Items Analysis */
+        .items-section {
+            display: none;
+            animation: slideUp 0.6s ease 1s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .item-analysis-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .item-analysis-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+        }
+
+        .item-analysis-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .item-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: rgba(52, 152, 219, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .item-analysis-header h3 {
+            font-size: 1.3rem;
+            color: var(--primary-light);
+        }
+
+        .item-metrics {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 5px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            border-radius: 4px;
+            transition: width 1s ease-in-out;
+        }
+
+        /* Bills History */
+        .bills-section {
+            display: none;
+            animation: slideUp 0.6s ease 1.2s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .bills-container {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .table-header h2 {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary-light);
+        }
+
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+        }
+
+        .bills-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .bills-table thead {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .bills-table th {
+            padding: 18px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary-light);
+            border-bottom: 2px solid var(--glass-border);
+        }
+
+        .bills-table tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+
+        .bills-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(5px);
+        }
+
+        .bills-table td {
+            padding: 20px 15px;
+            vertical-align: middle;
+        }
+
+        .bill-number {
+            font-weight: 600;
+            color: var(--primary-light);
+        }
+
+        .customer-info {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .bill-amount {
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .bill-status {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-paid {
+            background: rgba(46, 204, 113, 0.2);
+            color: #a3e4d7;
+            border: 1px solid rgba(46, 204, 113, 0.5);
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            background: rgba(52, 152, 219, 0.2);
+            border: 1px solid rgba(52, 152, 219, 0.5);
+            border-radius: 8px;
+            color: #aed6f1;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .action-btn:hover {
+            background: rgba(52, 152, 219, 0.4);
+            transform: scale(1.05);
+        }
+
+        /* Export Section */
+        .export-section {
+            margin-top: 40px;
+            text-align: center;
+            display: none;
+            animation: slideUp 0.6s ease 1.4s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .export-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 180px;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .export-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .export-btn:hover::before {
+            left: 100%;
+        }
+
+        .export-pdf {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        .export-excel {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+        }
+
+        .export-print {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .export-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 50px;
+            border-top: 1px solid var(--glass-border);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .connection-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            animation: pulseSuccess 2s infinite;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            padding: 15px 25px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            transform: translateX(150%);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification.success {
+            background: #27ae60;
+        }
+
+        .notification.error {
+            background: #e74c3c;
+        }
+
+        .notification.info {
+            background: #3498db;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, var(--primary-light), var(--accent-light));
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pulseSuccess {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(46, 204, 113, 0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            
+            .back-btn {
+                align-self: flex-start;
+            }
+            
+            .period-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .period-btn {
+                width: 100%;
+            }
+            
+            .custom-range {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .bills-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .export-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .export-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .chart-card {
+                height: 350px;
+            }
+        }
+
+        /* Loading Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 10px;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Magical Background -->
+    <div class="particle-bg" id="particleBg"></div>
+    <div class="glowing-orb orb-1"></div>
+    <div class="glowing-orb orb-2"></div>
+    <div class="glowing-orb orb-3"></div>
+
+    <!-- Header -->
+    <div class="header">
+        <button class="back-btn" id="backBtn">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="header-info">
+            <h1>Tiffin Shop Analytics</h1>
+            <p>
+                <i class="fas fa-chart-network"></i> Connected to Billing System 
+                <span class="live-indicator">
+                    <i class="fas fa-circle"></i> LIVE
+                </span>
+            </p>
+        </div>
+    </div>
+
+    <!-- System Check -->
+    <div class="system-check" id="systemCheck">
+        <div class="system-card">
+            <div class="system-header">
+                <div class="system-icon loading" id="systemIcon">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+                <div class="system-content">
+                    <h2>Initializing Analytics Engine</h2>
+                    <p>Connecting to billing data, analyzing patterns, and preparing insights...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Stats Overview -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Total Revenue</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="totalRevenue">₹0</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i> <span id="revenueChange">0%</span> growth
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Total Bills</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="totalBills">0</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i> <span id="billsChange">0%</span> growth
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Avg Bill Value</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="avgBill">₹0</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i> <span id="avgBillChange">0%</span> increase
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Today's Revenue</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="todayRevenue">₹0</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-fire"></i> <span id="todayChange">0%</span> vs yesterday
+                </div>
+            </div>
+        </div>
+
+        <!-- Time Period Selector -->
+        <div class="time-selector" id="timeSelector">
+            <div class="time-header">
+                <h2><i class="fas fa-calendar-alt"></i> Analytics Period</h2>
+                <div class="period-buttons">
+                    <button class="period-btn active" data-period="today">
+                        <i class="fas fa-sun"></i> Today
+                    </button>
+                    <button class="period-btn" data-period="yesterday">
+                        <i class="fas fa-history"></i> Yesterday
+                    </button>
+                    <button class="period-btn" data-period="week">
+                        <i class="fas fa-calendar-week"></i> This Week
+                    </button>
+                    <button class="period-btn" data-period="month">
+                        <i class="fas fa-calendar"></i> This Month
+                    </button>
+                    <button class="period-btn" data-period="quarter">
+                        <i class="fas fa-chart-line"></i> This Quarter
+                    </button>
+                    <button class="period-btn" data-period="year">
+                        <i class="fas fa-chart-bar"></i> This Year
+                    </button>
+                    <button class="period-btn" data-period="custom" id="customPeriodBtn">
+                        <i class="fas fa-sliders-h"></i> Custom
+                    </button>
+                </div>
+            </div>
+            
+            <div class="custom-range" id="customRange">
+                <input type="date" class="date-input" id="startDate">
+                <span>to</span>
+                <input type="date" class="date-input" id="endDate">
+                <button class="apply-btn" id="applyRangeBtn">
+                    <i class="fas fa-chart-line"></i> Apply Range
+                </button>
+            </div>
+            
+            <div style="margin-top: 20px; color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+                <i class="fas fa-info-circle" style="color: var(--primary); margin-right: 5px;"></i>
+                Analyzing data from Tiffin Shop Billing System • Real-time updates every 5 minutes
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section" id="chartsSection">
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-line"></i> Revenue Trend</h3>
+                        <div class="chart-actions">
+                            <button class="chart-action-btn" title="Refresh" data-chart="revenue">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                            <button class="chart-action-btn" title="Download" data-chart="revenue">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-pie"></i> Category Distribution</h3>
+                        <div class="chart-actions">
+                            <button class="chart-action-btn" title="Refresh" data-chart="category">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                            <button class="chart-action-btn" title="Download" data-chart="category">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-bar"></i> Top Selling Items</h3>
+                        <div class="chart-actions">
+                            <button class="chart-action-btn" title="Refresh" data-chart="items">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                            <button class="chart-action-btn" title="Download" data-chart="items">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="itemsChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-area"></i> Hourly Performance</h3>
+                        <div class="chart-actions">
+                            <button class="chart-action-btn" title="Refresh" data-chart="hourly">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                            <button class="chart-action-btn" title="Download" data-chart="hourly">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="hourlyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Items Analysis -->
+        <div class="items-section" id="itemsSection">
+            <h2 style="font-size: 1.8rem; margin-bottom: 25px; color: var(--primary-light);">
+                <i class="fas fa-utensils"></i> Menu Items Analysis
+            </h2>
+            
+            <div class="items-grid" id="itemsAnalysisGrid">
+                <!-- Items will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- Bills History -->
+        <div class="bills-section" id="billsSection">
+            <div class="bills-container">
+                <div class="table-header">
+                    <h2><i class="fas fa-history"></i> Recent Transactions</h2>
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" id="searchBills" placeholder="Search bills, customers...">
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="bills-table">
+                        <thead>
+                            <tr>
+                                <th>Bill No.</th>
+                                <th>Customer</th>
+                                <th>Date & Time</th>
+                                <th>Items</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="billsTableBody">
+                            <!-- Bills will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px; color: rgba(255,255,255,0.7);">
+                    <i class="fas fa-database" style="margin-right: 5px;"></i>
+                    Showing <span id="showingCount">0</span> of <span id="totalCount">0</span> bills
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Section -->
+        <div class="export-section" id="exportSection">
+            <h2 style="font-size: 1.8rem; margin-bottom: 20px; color: var(--primary-light);">
+                <i class="fas fa-rocket"></i> Export & Share Reports
+            </h2>
+            <p style="color: rgba(255,255,255,0.7); margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Generate comprehensive reports for stakeholders, tax filing, or business analysis.
+            </p>
+            
+            <div class="export-buttons">
+                <button class="export-btn export-pdf" id="exportPdfBtn">
+                    <i class="fas fa-file-pdf"></i> PDF Report
+                </button>
+                <button class="export-btn export-excel" id="exportExcelBtn">
+                    <i class="fas fa-file-excel"></i> Excel Sheet
+                </button>
+                <button class="export-btn export-print" id="exportPrintBtn">
+                    <i class="fas fa-print"></i> Print Summary
+                </button>
+            </div>
+            
+            <div style="margin-top: 30px; padding: 20px; background: rgba(52, 152, 219, 0.1); border-radius: 15px; border: 1px solid rgba(52, 152, 219, 0.3);">
+                <div class="connection-status">
+                    <i class="fas fa-plug"></i> Connected to Billing System
+                </div>
+                <p style="margin-top: 10px; color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+                    <i class="fas fa-sync-alt fa-spin" style="margin-right: 5px;"></i>
+                    Auto-syncing with <a href="billing.html" style="color: var(--primary); text-decoration: none; font-weight: 600;">Billing Page</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p><i class="fas fa-chart-network"></i> Tiffin Shop Analytics System • Connected to Billing & Dashboard</p>
+        <p>Powered by Advanced Data Analytics • Real-time synchronization with billing data</p>
+    </div>
+
+    <script>
+        // Analytics Data
+        let analyticsData = {
+            period: 'today',
+            totalRevenue: 0,
+            totalBills: 0,
+            avgBill: 0,
+            todayRevenue: 0,
+            revenueChange: 0,
+            billsChange: 0,
+            avgBillChange: 0,
+            todayChange: 0,
+            bills: [],
+            items: [],
+            categories: []
+        };
+
+        // Chart instances
+        let revenueChart = null;
+        let categoryChart = null;
+        let itemsChart = null;
+        let hourlyChart = null;
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create magical particles
+            createParticles();
+            
+            // Start system check
+            initializeSystem();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Add magical effects
+            addMagicalEffects();
+        });
+        
+        function createParticles() {
+            const particleBg = document.getElementById('particleBg');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                const size = Math.random() * 20 + 5;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                const colors = ['#5dade2', '#58d68d', '#9b59b6'];
+                const color = colors[Math.floor(Math.random() * 3)];
+                particle.style.background = `radial-gradient(circle, ${color} 0%, transparent 70%)`;
+                
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.animationDelay = `${Math.random() * 20}s`;
+                particle.style.animationDuration = `${Math.random() * 10 + 15}s`;
+                
+                particleBg.appendChild(particle);
+            }
+        }
+        
+        function initializeSystem() {
+            // Check if user is logged in
+            const userEmail = localStorage.getItem('userEmail') || 'Admin';
+            const isLoggedIn = localStorage.getItem('isLoggedIn') || 'true';
+            
+            setTimeout(() => {
+                if (isLoggedIn === 'true') {
+                    // Successfully logged in
+                    document.getElementById('systemIcon').className = 'system-icon connected';
+                    document.getElementById('systemIcon').innerHTML = '<i class="fas fa-check"></i>';
+                    document.querySelector('.system-content h2').textContent = 'System Connected!';
+                    document.querySelector('.system-content p').textContent = `Welcome ${userEmail}, loading analytics...`;
+                    
+                    // Load data
+                    setTimeout(() => {
+                        loadAnalyticsData();
+                    }, 800);
+                } else {
+                    // Not logged in
+                    document.getElementById('systemIcon').className = 'system-icon error';
+                    document.getElementById('systemIcon').innerHTML = '<i class="fas fa-times"></i>';
+                    document.querySelector('.system-content h2').textContent = 'Access Required!';
+                    document.querySelector('.system-content p').textContent = 'Please login to view analytics dashboard';
+                    
+                    // Add login button
+                    setTimeout(() => {
+                        const systemCard = document.querySelector('.system-card');
+                        const loginBtn = document.createElement('button');
+                        loginBtn.className = 'apply-btn';
+                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Go to Login';
+                        loginBtn.style.marginTop = '20px';
+                        loginBtn.onclick = () => {
+                            window.location.href = 'login.html';
+                        };
+                        systemCard.appendChild(loginBtn);
+                    }, 1000);
+                }
+            }, 1500);
+        }
+        
+        function loadAnalyticsData() {
+            // Load bills from billing system
+            const savedBills = localStorage.getItem('tiffinShopBills');
+            const savedItems = localStorage.getItem('tiffinShopItems');
+            
+            if (savedBills) {
+                analyticsData.bills = JSON.parse(savedBills);
+                analyticsData.bills.forEach(bill => {
+                    bill.date = new Date(bill.date);
+                });
+                
+                // Sort bills by date (newest first)
+                analyticsData.bills.sort((a, b) => b.date - a.date);
+            } else {
+                // Generate sample data if no bills exist
+                generateSampleData();
+            }
+            
+            if (savedItems) {
+                analyticsData.items = JSON.parse(savedItems);
+            }
+            
+            // Calculate categories from items
+            if (analyticsData.items.length > 0) {
+                analyticsData.categories = [...new Set(analyticsData.items.map(item => item.category))];
+            }
+            
+            // Calculate analytics for today
+            calculateAnalytics('today');
+            
+            // Show analytics dashboard
+            showAnalyticsDashboard();
+        }
+        
+        function generateSampleData() {
+            // Generate sample bills for demonstration
+            const sampleCustomers = [
+                'Rahul Sharma', 'Priya Patel', 'Amit Kumar', 'Sneha Singh', 'Rajesh Verma',
+                'Anjali Gupta', 'Vikram Mehta', 'Pooja Reddy', 'Arun Nair', 'Kavita Joshi'
+            ];
+            
+            const sampleItems = [
+                { name: 'Veg Biryani', price: 120, category: 'Veg Tiffin' },
+                { name: 'Chicken Curry', price: 150, category: 'Non-Veg Tiffin' },
+                { name: 'Paneer Butter Masala', price: 140, category: 'Veg Tiffin' },
+                { name: 'Idli Sambar', price: 60, category: 'Breakfast' },
+                { name: 'Masala Dosa', price: 80, category: 'Breakfast' },
+                { name: 'Chole Bhature', price: 100, category: 'Lunch' },
+                { name: 'Veg Thali', price: 160, category: 'Combos' },
+                { name: 'Non-Veg Thali', price: 220, category: 'Combos' },
+                { name: 'Lassi', price: 40, category: 'Beverages' },
+                { name: 'Gulab Jamun', price: 50, category: 'Snacks' }
+            ];
+            
+            const bills = [];
+            const today = new Date();
+            
+            // Generate bills for the last 30 days
+            for (let i = 0; i < 30; i++) {
+                const billDate = new Date();
+                billDate.setDate(today.getDate() - Math.floor(Math.random() * 30));
+                billDate.setHours(Math.floor(Math.random() * 12) + 8);
+                billDate.setMinutes(Math.floor(Math.random() * 60));
+                
+                const itemsCount = Math.floor(Math.random() * 4) + 1;
+                let subtotal = 0;
+                const items = [];
+                
+                for (let j = 0; j < itemsCount; j++) {
+                    const item = sampleItems[Math.floor(Math.random() * sampleItems.length)];
+                    const quantity = Math.floor(Math.random() * 3) + 1;
+                    subtotal += item.price * quantity;
+                    
+                    items.push({
+                        name: item.name,
+                        price: item.price,
+                        quantity: quantity,
+                        category: item.category
+                    });
+                }
+                
+                const gst = subtotal * 0.05;
+                const delivery = 30;
+                const total = subtotal + gst + delivery;
+                
+                bills.push({
+                    id: 'TS-' + (2023000 + i),
+                    date: billDate,
+                    customerName: sampleCustomers[Math.floor(Math.random() * sampleCustomers.length)],
+                    customerPhone: '98765432' + Math.floor(Math.random() * 90 + 10),
+                    customerAddress: 'Address ' + (i + 1),
+                    items: items,
+                    subtotal: subtotal,
+                    gst: gst,
+                    delivery: delivery,
+                    total: total,
+                    status: 'paid'
+                });
+            }
+            
+            analyticsData.bills = bills;
+            localStorage.setItem('tiffinShopBills', JSON.stringify(bills));
+            
+            // Also save sample items if not exists
+            if (!localStorage.getItem('tiffinShopItems')) {
+                localStorage.setItem('tiffinShopItems', JSON.stringify(sampleItems));
+                analyticsData.items = sampleItems;
+                analyticsData.categories = [...new Set(sampleItems.map(item => item.category))];
+            }
+        }
+        
+        function calculateAnalytics(period) {
+            const now = new Date();
+            let startDate, endDate;
+            
+            switch(period) {
+                case 'today':
+                    startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                    endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+                    break;
+                case 'yesterday':
+                    startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+                    endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 23, 59, 59);
+                    break;
+                case 'week':
+                    startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
+                    endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+                    break;
+                case 'month':
+                    startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                    endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+                    break;
+                case 'quarter':
+                    const quarter = Math.floor(now.getMonth() / 3);
+                    startDate = new Date(now.getFullYear(), quarter * 3, 1);
+                    endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+                    break;
+                case 'year':
+                    startDate = new Date(now.getFullYear(), 0, 1);
+                    endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+                    break;
+                case 'custom':
+                    // Handle custom date range
+                    const startInput = document.getElementById('startDate').value;
+                    const endInput = document.getElementById('endDate').value;
+                    
+                    if (!startInput || !endInput) {
+                        showNotification('Please select both start and end dates', 'error');
+                        return;
+                    }
+                    
+                    startDate = new Date(startInput);
+                    endDate = new Date(endInput);
+                    endDate.setHours(23, 59, 59, 999);
+                    break;
+            }
+            
+            // Filter bills for the period
+            const periodBills = analyticsData.bills.filter(bill => {
+                const billDate = new Date(bill.date);
+                return billDate >= startDate && billDate <= endDate;
+            });
+            
+            // Calculate totals
+            analyticsData.totalRevenue = periodBills.reduce((sum, bill) => sum + bill.total, 0);
+            analyticsData.totalBills = periodBills.length;
+            analyticsData.avgBill = periodBills.length > 0 ? analyticsData.totalRevenue / periodBills.length : 0;
+            
+            // Calculate today's revenue
+            const todayBills = analyticsData.bills.filter(bill => {
+                const billDate = new Date(bill.date);
+                const today = new Date();
+                return billDate.getDate() === today.getDate() && 
+                       billDate.getMonth() === today.getMonth() && 
+                       billDate.getFullYear() === today.getFullYear();
+            });
+            analyticsData.todayRevenue = todayBills.reduce((sum, bill) => sum + bill.total, 0);
+            
+            // Calculate changes (for demo, using random values)
+            analyticsData.revenueChange = (Math.random() * 25 + 5).toFixed(1);
+            analyticsData.billsChange = (Math.random() * 20 + 3).toFixed(1);
+            analyticsData.avgBillChange = (Math.random() * 15 + 2).toFixed(1);
+            analyticsData.todayChange = (Math.random() * 30 + 10).toFixed(1);
+            
+            // Update UI
+            updateStatsDisplay();
+            updateCharts(periodBills);
+            updateItemsAnalysis(periodBills);
+            updateBillsTable(periodBills);
+        }
+        
+        function showAnalyticsDashboard() {
+            // Hide system check with animation
+            const systemCheck = document.getElementById('systemCheck');
+            systemCheck.style.opacity = '0';
+            systemCheck.style.transform = 'translateY(-20px)';
+            systemCheck.style.transition = 'all 0.5s ease';
+            
+            setTimeout(() => {
+                systemCheck.style.display = 'none';
+                
+                // Show all analytics sections
+                document.getElementById('statsGrid').style.display = 'grid';
+                document.getElementById('timeSelector').style.display = 'block';
+                document.getElementById('chartsSection').style.display = 'block';
+                document.getElementById('itemsSection').style.display = 'block';
+                document.getElementById('billsSection').style.display = 'block';
+                document.getElementById('exportSection').style.display = 'block';
+                
+                // Add magical entrance
+                setTimeout(() => {
+                    document.querySelector('.container').style.opacity = '1';
+                }, 100);
+            }, 500);
+        }
+        
+        function updateStatsDisplay() {
+            document.getElementById('totalRevenue').textContent = `₹${Math.round(analyticsData.totalRevenue).toLocaleString('en-IN')}`;
+            document.getElementById('totalBills').textContent = analyticsData.totalBills;
+            document.getElementById('avgBill').textContent = `₹${Math.round(analyticsData.avgBill).toLocaleString('en-IN')}`;
+            document.getElementById('todayRevenue').textContent = `₹${Math.round(analyticsData.todayRevenue).toLocaleString('en-IN')}`;
+            
+            document.getElementById('revenueChange').textContent = `${analyticsData.revenueChange}%`;
+            document.getElementById('billsChange').textContent = `${analyticsData.billsChange}%`;
+            document.getElementById('avgBillChange').textContent = `${analyticsData.avgBillChange}%`;
+            document.getElementById('todayChange').textContent = `${analyticsData.todayChange}%`;
+            
+            // Update change colors
+            const changes = ['revenueChange', 'billsChange', 'avgBillChange', 'todayChange'];
+            changes.forEach(changeId => {
+                const changeElement = document.getElementById(changeId);
+                const changeValue = parseFloat(changeElement.textContent);
+                const parent = changeElement.closest('.stat-change');
+                
+                if (changeValue > 0) {
+                    parent.className = 'stat-change positive';
+                    parent.innerHTML = `<i class="fas fa-arrow-up"></i> ${changeValue}% growth`;
+                } else if (changeValue < 0) {
+                    parent.className = 'stat-change negative';
+                    parent.innerHTML = `<i class="fas fa-arrow-down"></i> ${Math.abs(changeValue)}% decline`;
+                } else {
+                    parent.className = 'stat-change';
+                    parent.innerHTML = `<i class="fas fa-minus"></i> ${changeValue}% change`;
+                }
+            });
+        }
+        
+        function updateCharts(periodBills) {
+            // Destroy existing charts
+            if (revenueChart) revenueChart.destroy();
+            if (categoryChart) categoryChart.destroy();
+            if (itemsChart) itemsChart.destroy();
+            if (hourlyChart) hourlyChart.destroy();
+            
+            // Prepare data for charts
+            const revenueData = prepareRevenueData(periodBills);
+            const categoryData = prepareCategoryData(periodBills);
+            const itemsData = prepareItemsData(periodBills);
+            const hourlyData = prepareHourlyData(periodBills);
+            
+            // Create charts
+            createRevenueChart(revenueData);
+            createCategoryChart(categoryData);
+            createItemsChart(itemsData);
+            createHourlyChart(hourlyData);
+        }
+        
+        function prepareRevenueData(bills) {
+            // Group by last 7 days
+            const revenueByDate = {};
+            const today = new Date();
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+                const dateStr = date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+                revenueByDate[dateStr] = 0;
+            }
+            
+            bills.forEach(bill => {
+                const billDate = new Date(bill.date);
+                const dateStr = billDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+                
+                if (revenueByDate.hasOwnProperty(dateStr)) {
+                    revenueByDate[dateStr] += bill.total;
+                }
+            });
+            
+            return {
+                labels: Object.keys(revenueByDate),
+                data: Object.values(revenueByDate)
+            };
+        }
+        
+        function prepareCategoryData(bills) {
+            const categories = {};
+            
+            bills.forEach(bill => {
+                bill.items.forEach(item => {
+                    if (item.category) {
+                        if (!categories[item.category]) {
+                            categories[item.category] = 0;
+                        }
+                        categories[item.category] += item.price * item.quantity;
+                    }
+                });
+            });
+            
+            // Sort by value
+            const sorted = Object.entries(categories).sort((a, b) => b[1] - a[1]);
+            
+            return {
+                labels: sorted.map(item => item[0]),
+                data: sorted.map(item => item[1])
+            };
+        }
+        
+        function prepareItemsData(bills) {
+            const items = {};
+            
+            bills.forEach(bill => {
+                bill.items.forEach(item => {
+                    if (!items[item.name]) {
+                        items[item.name] = 0;
+                    }
+                    items[item.name] += item.quantity;
+                });
+            });
+            
+            // Sort by quantity and take top 7
+            const sorted = Object.entries(items).sort((a, b) => b[1] - a[1]).slice(0, 7);
+            
+            return {
+                labels: sorted.map(item => item[0]),
+                data: sorted.map(item => item[1])
+            };
+        }
+        
+        function prepareHourlyData(bills) {
+            const hourly = Array(14).fill(0); // 8 AM to 10 PM
+            
+            bills.forEach(bill => {
+                const hour = new Date(bill.date).getHours();
+                if (hour >= 8 && hour <= 21) {
+                    hourly[hour - 8] += bill.total;
+                }
+            });
+            
+            const labels = [];
+            for (let i = 8; i <= 21; i++) {
+                labels.push(`${i}:00`);
+            }
+            
+            return {
+                labels: labels,
+                data: hourly
+            };
+        }
+        
+        function createRevenueChart(data) {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            revenueChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Daily Revenue (₹)',
+                        data: data.data,
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#5dade2',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            callbacks: {
+                                label: function(context) {
+                                    return `Revenue: ₹${context.raw.toLocaleString('en-IN')}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                callback: function(value) {
+                                    return '₹' + value.toLocaleString('en-IN');
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function createCategoryChart(data) {
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            
+            // Generate beautiful colors for categories
+            const colors = [
+                '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c',
+                '#e74c3c', '#34495e', '#f1c40f', '#d35400', '#16a085'
+            ];
+            
+            categoryChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        data: data.data,
+                        backgroundColor: colors.slice(0, data.labels.length),
+                        borderColor: 'rgba(255, 255, 255, 0.1)',
+                        borderWidth: 1,
+                        hoverOffset: 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                font: {
+                                    size: 12
+                                },
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${context.label}: ₹${value.toLocaleString('en-IN')} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function createItemsChart(data) {
+            const ctx = document.getElementById('itemsChart').getContext('2d');
+            
+            itemsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Quantity Sold',
+                        data: data.data,
+                        backgroundColor: 'rgba(46, 204, 113, 0.7)',
+                        borderColor: '#2ecc71',
+                        borderWidth: 1,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                callback: function(value) {
+                                    return value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function createHourlyChart(data) {
+            const ctx = document.getElementById('hourlyChart').getContext('2d');
+            hourlyChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Revenue by Hour (₹)',
+                        data: data.data,
+                        borderColor: '#f39c12',
+                        backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#f7dc6f',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            callbacks: {
+                                label: function(context) {
+                                    return `Revenue: ₹${context.raw.toLocaleString('en-IN')}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                callback: function(value) {
+                                    return '₹' + value.toLocaleString('en-IN');
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateItemsAnalysis(bills) {
+            // Count items sold
+            const itemCounts = {};
+            const itemRevenue = {};
+            
+            bills.forEach(bill => {
+                bill.items.forEach(item => {
+                    if (!itemCounts[item.name]) {
+                        itemCounts[item.name] = 0;
+                        itemRevenue[item.name] = 0;
+                    }
+                    itemCounts[item.name] += item.quantity;
+                    itemRevenue[item.name] += item.price * item.quantity;
+                });
+            });
+            
+            // Get top 6 items
+            const topItems = Object.entries(itemCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 6)
+                .map(([name, count]) => ({ name, count, revenue: itemRevenue[name] }));
+            
+            // Calculate total items sold
+            const totalItems = Object.values(itemCounts).reduce((a, b) => a + b, 0);
+            const totalRevenue = Object.values(itemRevenue).reduce((a, b) => a + b, 0);
+            
+            const itemsGrid = document.getElementById('itemsAnalysisGrid');
+            
+            if (topItems.length === 0) {
+                itemsGrid.innerHTML = `
+                    <div class="item-analysis-card" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                        <i class="fas fa-utensils" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"></i>
+                        <h3 style="color: var(--primary-light); margin-bottom: 10px;">No Sales Data</h3>
+                        <p style="color: rgba(255,255,255,0.7);">No items sold in the selected period.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            itemsGrid.innerHTML = topItems.map(item => {
+                const percentage = totalItems > 0 ? Math.round((item.count / totalItems) * 100) : 0;
+                const itemIcon = getItemIcon(item.name);
+                
+                return `
+                    <div class="item-analysis-card">
+                        <div class="item-analysis-header">
+                            <div class="item-icon">
+                                <i class="${itemIcon}"></i>
+                            </div>
+                            <h3>${item.name}</h3>
+                        </div>
+                        <div class="item-metrics">
+                            <div class="metric">
+                                <div class="metric-value">${item.count}</div>
+                                <div class="metric-label">Sold</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">₹${Math.round(item.revenue)}</div>
+                                <div class="metric-label">Revenue</div>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${percentage}%"></div>
+                        </div>
+                        <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem; text-align: right;">
+                            ${percentage}% of total sales
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function getItemIcon(name) {
+            const lowerName = name.toLowerCase();
+            if (lowerName.includes('biryani')) return 'fas fa-mortar-pestle';
+            if (lowerName.includes('curry')) return 'fas fa-utensil-spoon';
+            if (lowerName.includes('paneer')) return 'fas fa-cheese';
+            if (lowerName.includes('chicken')) return 'fas fa-drumstick-bite';
+            if (lowerName.includes('fish')) return 'fas fa-fish';
+            if (lowerName.includes('mutton')) return 'fas fa-bacon';
+            if (lowerName.includes('idli')) return 'fas fa-blender';
+            if (lowerName.includes('dosa')) return 'fas fa-blender';
+            if (lowerName.includes('chole')) return 'fas fa-utensil-spoon';
+            if (lowerName.includes('thali')) return 'fas fa-box';
+            if (lowerName.includes('lassi')) return 'fas fa-glass-whiskey';
+            if (lowerName.includes('gulab')) return 'fas fa-cookie';
+            if (lowerName.includes('rice')) return 'fas fa-seedling';
+            return 'fas fa-utensils';
+        }
+        
+        function updateBillsTable(bills) {
+            const tbody = document.getElementById('billsTableBody');
+            tbody.innerHTML = '';
+            
+            const filteredBills = bills.slice(0, 8); // Show only 8 most recent
+            
+            if (filteredBills.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: rgba(255,255,255,0.5);">
+                            <i class="fas fa-receipt" style="font-size: 3rem; margin-bottom: 15px; display: block;"></i>
+                            No transactions in the selected period.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            filteredBills.forEach((bill, index) => {
+                const row = document.createElement('tr');
+                const dateStr = new Date(bill.date).toLocaleDateString('en-IN', { 
+                    day: 'numeric', 
+                    month: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                const itemsCount = bill.items.reduce((sum, item) => sum + item.quantity, 0);
+                
+                row.innerHTML = `
+                    <td>
+                        <div class="bill-number">${bill.id}</div>
+                    </td>
+                    <td>
+                        <div>${bill.customerName}</div>
+                        <div class="customer-info">${bill.customerPhone}</div>
+                    </td>
+                    <td>${dateStr}</td>
+                    <td>${itemsCount} items</td>
+                    <td>
+                        <div class="bill-amount">₹${Math.round(bill.total).toLocaleString('en-IN')}</div>
+                    </td>
+                    <td>
+                        <span class="bill-status status-paid">Paid</span>
+                    </td>
+                    <td>
+                        <button class="action-btn view-bill-btn" data-id="${bill.id}">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+            
+            // Update counts
+            document.getElementById('showingCount').textContent = filteredBills.length;
+            document.getElementById('totalCount').textContent = bills.length;
+        }
+        
+        function setupEventListeners() {
+            // Back button (to billing.html) - FIXED
+            document.getElementById('backBtn').addEventListener('click', function() {
+                // Add magical exit animation
+                this.style.transform = 'translateX(-20px) rotate(-360deg)';
+                document.body.style.opacity = '0.8';
+                
+                setTimeout(() => {
+                    window.location.href = 'billing.html';
+                }, 500);
+            });
+            
+            // Period selector buttons
+            document.querySelectorAll('.period-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    const period = this.getAttribute('data-period');
+                    
+                    // Show/hide custom date range
+                    if (period === 'custom') {
+                        document.getElementById('customRange').classList.add('show');
+                    } else {
+                        document.getElementById('customRange').classList.remove('show');
+                        calculateAnalytics(period);
+                    }
+                });
+            });
+            
+            // Custom period button
+            document.getElementById('customPeriodBtn').addEventListener('click', function() {
+                document.getElementById('customRange').classList.add('show');
+            });
+            
+            // Apply custom range button
+            document.getElementById('applyRangeBtn').addEventListener('click', function() {
+                calculateAnalytics('custom');
+            });
+            
+            // Search bills 
+            document.getElementById('searchBills').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const rows = document.querySelectorAll('#billsTableBody tr');
+                
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? '' : 'none';
+                });
+            });
+            
+            // Export buttons
+            document.getElementById('exportPdfBtn').addEventListener('click', function() {
+                exportPDF();
+            });
+            
+            document.getElementById('exportExcelBtn').addEventListener('click', function() {
+                exportExcel();
+            });
+            
+            document.getElementById('exportPrintBtn').addEventListener('click', function() {
+                window.print();
+            });
+            
+            // Chart action buttons
+            document.querySelectorAll('.chart-action-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const chartType = this.getAttribute('data-chart');
+                    const action = this.querySelector('i').className.includes('sync-alt') ? 'refresh' : 'download';
+                    
+                    if (action === 'refresh') {
+                        refreshChart(chartType);
+                    } else {
+                        downloadChart(chartType);
+                    }
+                });
+            });
+            
+            // Set default dates for custom range
+            const today = new Date().toISOString().split('T')[0];
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            const weekAgoStr = weekAgo.toISOString().split('T')[0];
+            
+            document.getElementById('startDate').value = weekAgoStr;
+            document.getElementById('endDate').value = today;
+            document.getElementById('startDate').max = today;
+            document.getElementById('endDate').max = today;
+            
+            // Add event delegation for view bill buttons
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.view-bill-btn')) {
+                    const billId = e.target.closest('.view-bill-btn').getAttribute('data-id');
+                    viewBillDetails(billId);
+                }
+            });
+            
+            // Add auto-refresh every 5 minutes
+            setInterval(() => {
+                refreshAnalytics();
+            }, 300000); // 5 minutes
+        }
+        
+        function refreshAnalytics() {
+            // Refresh data from localStorage
+            const savedBills = localStorage.getItem('tiffinShopBills');
+            if (savedBills) {
+                analyticsData.bills = JSON.parse(savedBills);
+                analyticsData.bills.forEach(bill => {
+                    bill.date = new Date(bill.date);
+                });
+                analyticsData.bills.sort((a, b) => b.date - a.date);
+                
+                // Recalculate analytics for current period
+                calculateAnalytics(analyticsData.period);
+                
+                // Show notification
+                showNotification('Analytics refreshed with latest data', 'info');
+            }
+        }
+        
+        function viewBillDetails(billId) {
+            // Find the bill
+            const bill = analyticsData.bills.find(b => b.id === billId);
+            if (!bill) return;
+            
+            // Create a modal to show bill details
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            
+            const dateStr = new Date(bill.date).toLocaleDateString('en-IN', { 
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="color: var(--primary-light);">Bill Details: ${bill.id}</h2>
+                        <button id="closeModalBtn" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1);">&times;</button>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                        <p style="color: rgba(255,255,255,0.9); margin-bottom: 10px;"><strong><i class="fas fa-calendar"></i> Date:</strong> ${dateStr}</p>
+                        <p style="color: rgba(255,255,255,0.9); margin-bottom: 10px;"><strong><i class="fas fa-user"></i> Customer:</strong> ${bill.customerName}</p>
+                        <p style="color: rgba(255,255,255,0.9); margin-bottom: 10px;"><strong><i class="fas fa-phone"></i> Phone:</strong> ${bill.customerPhone}</p>
+                        <p style="color: rgba(255,255,255,0.9);"><strong><i class="fas fa-map-marker-alt"></i> Address:</strong> ${bill.customerAddress}</p>
+                    </div>
+                    
+                    <h3 style="color: var(--primary-light); margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-shopping-cart"></i> Ordered Items
+                    </h3>
+                    <div style="margin-bottom: 20px; max-height: 200px; overflow-y: auto;">
+                        ${bill.items.map(item => `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <div>
+                                    <strong>${item.name}</strong><br>
+                                    <small style="color: rgba(255,255,255,0.6);">${item.quantity} × ₹${item.price}</small>
+                                </div>
+                                <div style="color: var(--accent); font-weight: 600;">₹${item.price * item.quantity}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Subtotal:</span>
+                            <span>₹${bill.subtotal.toFixed(2)}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>GST (5%):</span>
+                            <span>₹${bill.gst.toFixed(2)}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Delivery Charge:</span>
+                            <span>₹${bill.delivery.toFixed(2)}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: bold; border-top: 2px solid var(--primary); padding-top: 15px; margin-top: 10px; color: var(--accent);">
+                            <span>Total Amount:</span>
+                            <span>₹${bill.total.toFixed(2)}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Add close functionality
+            document.getElementById('closeModalBtn').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            // Close on background click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            });
+            
+            // Close on Escape key
+            document.addEventListener('keydown', function closeOnEscape(e) {
+                if (e.key === 'Escape') {
+                    document.body.removeChild(modal);
+                    document.removeEventListener('keydown', closeOnEscape);
+                }
+            });
+        }
+        
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            
+            let icon;
+            switch(type) {
+                case 'success':
+                    icon = 'fas fa-check-circle';
+                    break;
+                case 'error':
+                    icon = 'fas fa-exclamation-circle';
+                    break;
+                default:
+                    icon = 'fas fa-info-circle';
+            }
+            
+            notification.innerHTML = `<i class="${icon}"></i> ${message}`;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 10);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(150%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        document.body.removeChild(notification);
+                    }
+                }, 500);
+            }, 3000);
+        }
+        
+        function addMagicalEffects() {
+            // Add glow effect to stat cards periodically
+            setInterval(() => {
+                const statCards = document.querySelectorAll('.stat-card');
+                statCards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px var(--glow)';
+                        
+                        setTimeout(() => {
+                            card.style.boxShadow = '';
+                        }, 1000);
+                    }, index * 300);
+                });
+            }, 8000);
+            
+            // Add animation to export buttons
+            const exportButtons = document.querySelectorAll('.export-btn');
+            exportButtons.forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px) scale(1.05)';
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+            
+            // Add click animation to all buttons
+            document.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+        }
+        
+        // Chart utility functions
+        function refreshChart(chartType) {
+            showNotification(`Refreshing ${chartType} chart...`, 'info');
+            calculateAnalytics(analyticsData.period);
+        }
+        
+        function downloadChart(chartType) {
+            const canvasId = chartType + 'Chart';
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = `${canvasId}-${new Date().toISOString().split('T')[0]}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showNotification('Chart downloaded successfully!', 'success');
+        }
+        
+        function exportPDF() {
+            const pdfBtn = document.getElementById('exportPdfBtn');
+            pdfBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+            
+            setTimeout(() => {
+                pdfBtn.innerHTML = '<i class="fas fa-file-pdf"></i> PDF Report';
+                showNotification('PDF report generated successfully!', 'success');
+                
+                // In a real implementation, you would generate an actual PDF
+                const reportContent = `
+                    Tiffin Shop Analytics Report
+                    Generated on: ${new Date().toLocaleDateString()}
+                    
+                    Total Revenue: ₹${Math.round(analyticsData.totalRevenue).toLocaleString('en-IN')}
+                    Total Bills: ${analyticsData.totalBills}
+                    Average Bill Value: ₹${Math.round(analyticsData.avgBill).toLocaleString('en-IN')}
+                    Today's Revenue: ₹${Math.round(analyticsData.todayRevenue).toLocaleString('en-IN')}
+                    
+                    --- End of Report ---
+                `;
+                
+                // Create a downloadable text file (simulating PDF)
+                const blob = new Blob([reportContent], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `Tiffin-Shop-Report-${new Date().toISOString().split('T')[0]}.txt`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }, 1500);
+        }
+        
+        function exportExcel() {
+            const excelBtn = document.getElementById('exportExcelBtn');
+            excelBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Exporting...';
+            
+            setTimeout(() => {
+                excelBtn.innerHTML = '<i class="fas fa-file-excel"></i> Excel Sheet';
+                showNotification('Excel sheet exported successfully!', 'success');
+                
+                // Create CSV content
+                const headers = ['Bill ID', 'Customer', 'Date', 'Items Count', 'Amount', 'Status'];
+                const csvContent = [
+                    headers.join(','),
+                    ...analyticsData.bills.map(bill => [
+                        bill.id,
+                        `"${bill.customerName}"`,
+                        new Date(bill.date).toLocaleDateString(),
+                        bill.items.reduce((sum, item) => sum + item.quantity, 0),
+                        bill.total,
+                        bill.status
+                    ].join(','))
+                ].join('\n');
+                
+                // Create downloadable CSV file
+                const blob = new Blob([csvContent], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `Tiffin-Shop-Data-${new Date().toISOString().split('T')[0]}.csv`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morning Bites | Restaurant Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #ff6b00;
+            --primary-light: #ff9a00;
+            --secondary: #6a11cb;
+            --secondary-light: #2575fc;
+            --dark: #1a1a2e;
+            --darker: #0f0f1a;
+            --light: #f8f9fa;
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glow: rgba(255, 107, 0, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Welcome Animation */
+        .welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff6b00, #ff9a00, #ffcc80);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            animation: welcomeOut 1.5s ease-out 2s forwards;
+        }
+
+        .welcome-portal {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            animation: welcomePortalSpin 2s linear infinite, welcomePortalPulse 2s ease-in-out infinite;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .welcome-portal::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: welcomeInnerSpin 1.5s linear infinite reverse;
+        }
+
+        .welcome-text {
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+            animation: welcomeTextGlow 2s ease-in-out infinite;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .welcome-subtext {
+            color: white;
+            font-size: 1.3rem;
+            opacity: 0.9;
+            text-align: center;
+            max-width: 500px;
+            line-height: 1.6;
+        }
+
+        /* Background animation */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary-light) 0%, transparent 70%);
+            opacity: 0.1;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .bg-circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .bg-circle:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            top: 60%;
+            right: 10%;
+            background: radial-gradient(circle, var(--secondary-light) 0%, transparent 70%);
+            animation-delay: 5s;
+        }
+
+        .bg-circle:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            bottom: 10%;
+            left: 20%;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Container and header */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease-out 2.5s forwards;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        .hotel-info h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .hotel-info p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 107, 0, 0.1);
+            padding: 15px 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 152, 0, 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .user-info:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 107, 0, 0.2);
+            border-color: var(--primary);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            box-shadow: 0 0 20px rgba(106, 17, 203, 0.5);
+            animation: avatarPulse 4s ease-in-out infinite;
+        }
+
+        .user-details {
+            min-width: 200px;
+        }
+
+        .user-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-light);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-email {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            word-break: break-all;
+            max-width: 200px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .user-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            color: #4caf50;
+            margin-top: 5px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #4caf50;
+            border-radius: 50%;
+            animation: statusPulse 2s infinite;
+        }
+
+        .logout-btn {
+            background: rgba(255, 107, 0, 0.2);
+            border: 1px solid var(--primary);
+            color: var(--primary-light);
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 107, 0, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 61, 0, 0.3);
+        }
+
+        /* Navigation */
+        .nav-container {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .nav-header h2 {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-header h2 i {
+            color: var(--primary);
+        }
+
+        .time-display {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-scroll-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-scroll-wrapper {
+            display: flex;
+            gap: 15px;
+            padding: 10px 5px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .nav-scroll-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-btn {
+            flex: 0 0 auto;
+            width: 180px;
+            height: 100px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: 0.5s;
+        }
+
+        .nav-btn:hover::before {
+            left: 100%;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-10px) scale(1.05);
+            border-color: var(--primary);
+            box-shadow: 0 15px 30px rgba(255, 107, 0, 0.4);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, rgba(255, 107, 0, 0.2), rgba(255, 154, 0, 0.1));
+            border-color: var(--primary);
+            box-shadow: 0 0 30px var(--glow), 0 15px 30px rgba(255, 107, 0, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .nav-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-btn.active .nav-icon {
+            animation: pulse 1.5s infinite;
+        }
+
+        .nav-text {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .nav-scroll-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s;
+        }
+
+        .nav-scroll-btn:hover {
+            background: rgba(255, 107, 0, 0.2);
+            border-color: var(--primary);
+            transform: translateY(-50%) scale(1.2);
+            box-shadow: 0 0 20px var(--glow);
+        }
+
+        .nav-scroll-btn.left {
+            left: 0;
+        }
+
+        .nav-scroll-btn.right {
+            right: 0;
+        }
+
+        /* Dashboard Stats */
+        .dashboard-title {
+            font-size: 2rem;
+            margin: 40px 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .dashboard-title i {
+            color: var(--primary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: cardSlideIn 0.5s ease forwards;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 2.8s; }
+        .stat-card:nth-child(2) { animation-delay: 2.9s; }
+        .stat-card:nth-child(3) { animation-delay: 3.0s; }
+        .stat-card:nth-child(4) { animation-delay: 3.1s; }
+        .stat-card:nth-child(5) { animation-delay: 3.2s; }
+        .stat-card:nth-child(6) { animation-delay: 3.3s; }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--primary-light));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 107, 0, 0.2);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-title {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            color: var(--primary);
+            background: rgba(255, 107, 0, 0.1);
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-value {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+
+        .stat-change.positive {
+            color: #4caf50;
+        }
+
+        .stat-change.negative {
+            color: #f44336;
+        }
+
+        .stat-source {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--glass-border);
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Live Updates Section */
+        .live-updates {
+            background: linear-gradient(135deg, rgba(106, 17, 203, 0.1), rgba(37, 117, 252, 0.1));
+            border: 1px solid rgba(106, 17, 203, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s ease 3.4s forwards;
+        }
+
+        .live-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .live-header h3 {
+            font-size: 1.5rem;
+        }
+
+        .live-indicator {
+            width: 12px;
+            height: 12px;
+            background: #ff4757;
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        .live-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .live-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            transition: all 0.3s;
+        }
+
+        .live-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .live-icon {
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .live-info h4 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .live-info p {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-light);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 40px;
+            border-top: 1px solid var(--glass-border);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s ease 3.5s forwards;
+        }
+
+        /* Animations */
+        @keyframes welcomeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+
+        @keyframes welcomePortalSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes welcomePortalPulse {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+        }
+
+        @keyframes welcomeInnerSpin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes welcomeTextGlow {
+            0%, 100% { opacity: 1; text-shadow: 0 0 20px rgba(0, 0, 0, 0.7); }
+            50% { opacity: 0.8; text-shadow: 0 0 30px rgba(255, 255, 255, 0.3); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes cardSlideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes avatarPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(106, 17, 203, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(106, 17, 203, 0.8); }
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            
+            .user-info {
+                align-self: stretch;
+                justify-content: space-between;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-btn {
+                width: 160px;
+                height: 90px;
+            }
+            
+            .nav-scroll-btn {
+                display: none;
+            }
+            
+            .welcome-text {
+                font-size: 2rem;
+            }
+            
+            .welcome-subtext {
+                font-size: 1rem;
+                padding: 0 20px;
+            }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, var(--primary), var(--primary-light));
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, var(--primary-light), var(--primary));
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Animation -->
+    <div class="welcome-overlay" id="welcomeOverlay">
+        <div class="welcome-portal"></div>
+        <div class="welcome-text" id="welcomeText">Welcome!</div>
+        <div class="welcome-subtext" id="welcomeSubtext">Loading your dashboard...</div>
+    </div>
+
+    <!-- Background Animation -->
+    <div class="bg-animation">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-section">
+                <div class="logo">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <div class="hotel-info">
+                    <h1 id="hotelName">Morning Bites</h1>
+                    <p>Restaurant Management Dashboard</p>
+                </div>
+            </div>
+            <div class="user-info" id="userInfo">
+                <!-- User details will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-container">
+            <div class="nav-header">
+                <h2><i class="fas fa-compass"></i> Quick Navigation</h2>
+                <div class="time-display" id="currentTime">
+                    Loading...
+                </div>
+            </div>
+            
+            <div class="nav-scroll-container">
+                <button class="nav-scroll-btn left" id="scrollLeft">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                
+              <div class="nav-scroll-wrapper" id="navWrapper">
+    <div class="nav-btn active" data-page="dashboard">
+        <div class="nav-icon">
+            <i class="fas fa-tachometer-alt"></i>
+        </div>
+        <div class="nav-text">Dashboard</div>
+    </div>
+
+    <div class="nav-btn" data-page="menu">
+        <div class="nav-icon">
+            <i class="fas fa-pizza-slice"></i>
+        </div>
+        <div class="nav-text">Menu Items</div>
+    </div>
+
+    <div class="nav-btn" data-page="billing">
+        <div class="nav-icon">
+            <i class="fas fa-receipt"></i>
+        </div>
+        <div class="nav-text">Billing</div>
+    </div>
+
+    <div class="nav-btn" data-page="preview">
+        <div class="nav-icon">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="nav-text">Preview</div>
+    </div>
+
+    <div class="nav-btn" data-page="reports">
+        <div class="nav-icon">
+            <i class="fas fa-file-alt"></i>
+        </div>
+        <div class="nav-text">Reports</div>
+    </div>
+
+    <div class="nav-btn" data-page="settings">
+        <div class="nav-icon">
+            <i class="fas fa-cog"></i>
+        </div>
+        <div class="nav-text">Settings</div>
+    </div>
+
+   
+
+    
+</div>
+
+                <button class="nav-scroll-btn right" id="scrollRight">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard Stats -->
+        <h2 class="dashboard-title">
+            <i class="fas fa-brain"></i> Restaurant Overview
+        </h2>
+        
+        <div class="stats-grid">
+            <!-- Total Sales -->
+            <div class="stat-card" id="totalSalesCard">
+                <div class="stat-header">
+                    <div class="stat-title">Total Sales</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="totalSales">₹45,820</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i> 12% from yesterday
+                </div>
+                <div class="stat-source">
+                    <i class="fas fa-link"></i> Today's revenue
+                </div>
+            </div>
+
+            <!-- Today Bills -->
+            <div class="stat-card" id="todayBillsCard">
+                <div class="stat-header">
+                    <div class="stat-title">Today's Bills</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="todayBills">24</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-plus"></i> 3 new bills today
+                </div>
+                <div class="stat-source">
+                    <i class="fas fa-link"></i> Current session
+                </div>
+            </div>
+
+            <!-- Items Count -->
+            <div class="stat-card" id="itemsCountCard">
+                <div class="stat-header">
+                    <div class="stat-title">Menu Items</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-hamburger"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="itemsCount">86</div>
+                <div class="stat-change">
+                    <span id="activeItems">78</span> active • <span id="inactiveItems">8</span> inactive
+                </div>
+                <div class="stat-source">
+                    <i class="fas fa-link"></i> Menu management
+                </div>
+            </div>
+
+            <!-- Tax Collected -->
+            <div class="stat-card" id="taxCollectedCard">
+                <div class="stat-header">
+                    <div class="stat-title">Tax Collected</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="taxCollected">₹4,210</div>
+                <div class="stat-change">
+                    GST Status: <span id="gstStatus" class="positive">Active</span>
+                </div>
+                <div class="stat-source">
+                    <i class="fas fa-link"></i> Financial reports
+                </div>
+            </div>
+
+            <!-- Pending Orders -->
+            <div class="stat-card" id="pendingOrdersCard">
+                <div class="stat-header">
+                    <div class="stat-title">Pending Orders</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="pendingOrders">7</div>
+                <div class="stat-change negative">
+                    <i class="fas fa-exclamation-circle"></i> Requires attention
+                </div>
+                <div class="stat-source">
+                    <i class="fas fa-link"></i> Order queue
+                </div>
+            </div>
+
+            <!-- Monthly Sales -->
+            <div class="stat-card" id="monthlySalesCard">
+                <div class="stat-header">
+                    <div class="stat-title">Monthly Sales</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="monthlySales">₹2,85,600</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i> On track for record month
+                </div>
+                <div class="stat-source">
+                    <i class="fas fa-link"></i> Monthly analytics
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Updates Section -->
+        <div class="live-updates">
+            <div class="live-header">
+                <div class="live-indicator"></div>
+                <h3>Live Updates Feed</h3>
+            </div>
+            <div class="live-grid">
+                <div class="live-item">
+                    <div class="live-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="live-info">
+                        <h4>Last Order</h4>
+                        <p id="lastOrderTime">5 min ago</p>
+                    </div>
+                </div>
+                <div class="live-item">
+                    <div class="live-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="live-info">
+                        <h4>Today Customers</h4>
+                        <p id="todayCustomers">42</p>
+                    </div>
+                </div>
+                <div class="live-item">
+                    <div class="live-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="live-info">
+                        <h4>Avg. Rating</h4>
+                        <p id="avgRating">4.7</p>
+                    </div>
+                </div>
+                <div class="live-item">
+                    <div class="live-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <div class="live-info">
+                        <h4>Popular Item</h4>
+                        <p id="popularItem">Margherita Pizza</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Morning Bites Restaurant Dashboard • Master Control System</p>
+            <p>All data syncs in real-time across all pages</p>
+        </div>
+    </div>
+
+    <script>
+        // Check if user is logged in and get user data
+        document.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+            const userEmail = sessionStorage.getItem('userEmail');
+            
+            if (!isLoggedIn || !userEmail) {
+                alert("You must be logged in to access the dashboard!");
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Get user data from localStorage or create from email
+            let userData = JSON.parse(localStorage.getItem('currentUser'));
+            
+            if (!userData) {
+                userData = {
+                    email: userEmail,
+                    name: userEmail.split('@')[0].charAt(0).toUpperCase() + userEmail.split('@')[0].slice(1),
+                    loginTime: new Date().toISOString()
+                };
+                localStorage.setItem('currentUser', JSON.stringify(userData));
+            }
+            
+            // Update welcome message with user's name
+            document.getElementById('welcomeText').textContent = `Welcome, ${userData.name}!`;
+            document.getElementById('welcomeSubtext').textContent = `Loading your personalized dashboard...`;
+            
+            // Update user info section
+            updateUserInfo(userData);
+            
+            // Update time display
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            // Initialize dashboard with stored data
+            initializeDashboard();
+            
+            // Navigation buttons
+            setupNavigation();
+            
+            // Logout functionality
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                sessionStorage.removeItem('isLoggedIn');
+                sessionStorage.removeItem('userEmail');
+                localStorage.removeItem('currentUser');
+                
+                // Show logout animation
+                document.body.innerHTML = `
+                    <div style="
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(135deg, #ff6b00, #ff9a00, #ffcc80);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        flex-direction: column;
+                        color: white;
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                        z-index: 9999;
+                    ">
+                        <div style="
+                            width: 100px;
+                            height: 100px;
+                            border-radius: 50%;
+                            background: rgba(255, 255, 255, 0.2);
+                            border: 5px solid rgba(255, 255, 255, 0.3);
+                            margin-bottom: 30px;
+                            animation: spin 2s linear infinite;
+                        "></div>
+                        <h1 style="font-size: 3rem; margin-bottom: 20px;">Goodbye!</h1>
+                        <p style="font-size: 1.2rem; opacity: 0.9;">Logged out successfully. Redirecting to login...</p>
+                    </div>
+                `;
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+            });
+            
+            // Simulate live updates
+            simulateLiveUpdates();
+            
+            // Add magical scrolling to navigation
+            setupMagicalScrolling();
+        });
+        
+        function updateUserInfo(userData) {
+            const userInfoDiv = document.getElementById('userInfo');
+            const firstName = userData.name.split(' ')[0];
+            const avatarLetter = firstName.charAt(0).toUpperCase();
+            
+            userInfoDiv.innerHTML = `
+                <div class="user-avatar">
+                    ${avatarLetter}
+                </div>
+                <div class="user-details">
+                    <div class="user-name">
+                        <i class="fas fa-user"></i>
+                        ${userData.name}
+                    </div>
+                    <div class="user-email">
+                        <i class="fas fa-envelope"></i>
+                        ${userData.email}
+                    </div>
+                    <div class="user-status">
+                        <div class="status-dot"></div>
+                        Online
+                    </div>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            `;
+            
+            // Re-attach logout event listener
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                sessionStorage.removeItem('isLoggedIn');
+                sessionStorage.removeItem('userEmail');
+                localStorage.removeItem('currentUser');
+                window.location.href = 'index.html';
+            });
+        }
+        
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            const dateString = now.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            document.getElementById('currentTime').innerHTML = `
+                <i class="fas fa-clock"></i> ${timeString} <br>
+                <small>${dateString}</small>
+            `;
+        }
+        
+        function initializeDashboard() {
+            // Load data from localStorage if available
+            const savedHotelName = localStorage.getItem('morningbites_hotelName');
+            const savedGSTStatus = localStorage.getItem('morningbites_gstStatus');
+            const savedItemsCount = localStorage.getItem('morningbites_itemsCount');
+            
+            // Update UI with current data
+            if (savedHotelName) document.getElementById('hotelName').textContent = savedHotelName;
+            
+            // Get user data for personalized greeting
+            const userData = JSON.parse(localStorage.getItem('currentUser'));
+            if (userData) {
+                const hours = new Date().getHours();
+                let greeting = "Good ";
+                if (hours < 12) greeting = "Good Morning";
+                else if (hours < 18) greeting = "Good Afternoon";
+                else greeting = "Good Evening";
+                
+                document.querySelector('.dashboard-title').innerHTML = `
+                    <i class="fas fa-brain"></i> ${greeting}, ${userData.name.split(' ')[0]}!
+                `;
+            }
+        }
+        
+        function setupNavigation() {
+            const navButtons = document.querySelectorAll('.nav-btn');
+            
+            navButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    const page = this.getAttribute('data-page');
+                    
+                    // In a real app, this would navigate to the page
+                    if (page !== 'dashboard') {
+                        showNotification(`Navigating to ${page.charAt(0).toUpperCase() + page.slice(1)} page...`);
+                        
+                        // Simulate data change from other page
+                        if (page === 'items') {
+                            simulateItemsPageUpdate();
+                        } else if (page === 'billing') {
+                            simulateBillingPageUpdate();
+                        } else if (page === 'preview') {
+                            simulatePreviewPageUpdate();
+                        } else if (page === 'settings') {
+                            simulateSettingsPageUpdate();
+                        }
+                    }
+                });
+            });
+        }
+        
+        function setupMagicalScrolling() {
+            const scrollContainer = document.getElementById('navWrapper');
+            const scrollLeftBtn = document.getElementById('scrollLeft');
+            const scrollRightBtn = document.getElementById('scrollRight');
+            
+            scrollLeftBtn.addEventListener('click', () => {
+                scrollContainer.scrollBy({ left: -200, behavior: 'smooth' });
+            });
+            
+            scrollRightBtn.addEventListener('click', () => {
+                scrollContainer.scrollBy({ left: 200, behavior: 'smooth' });
+            });
+        }
+        
+        function simulateLiveUpdates() {
+            // Simulate real-time updates
+            setInterval(() => {
+                const randomUpdate = Math.random();
+                
+                if (randomUpdate < 0.3) {
+                    // New bill created
+                    const todayBills = parseInt(document.getElementById('todayBills').textContent);
+                    document.getElementById('todayBills').textContent = todayBills + 1;
+                    
+                    const todayCustomers = parseInt(document.getElementById('todayCustomers').textContent);
+                    document.getElementById('todayCustomers').textContent = todayCustomers + 1;
+                    
+                    flashCard('todayBillsCard');
+                } else if (randomUpdate < 0.5) {
+                    // Order completed
+                    const pendingOrders = parseInt(document.getElementById('pendingOrders').textContent);
+                    if (pendingOrders > 0) {
+                        document.getElementById('pendingOrders').textContent = pendingOrders - 1;
+                        
+                        const totalSales = parseInt(document.getElementById('totalSales').textContent.replace('₹', '').replace(',', ''));
+                        document.getElementById('totalSales').textContent = `₹${(totalSales + Math.floor(Math.random() * 500) + 100).toLocaleString()}`;
+                        
+                        flashCard('pendingOrdersCard');
+                        flashCard('totalSalesCard');
+                    }
+                }
+                
+                // Update last order time
+                const times = ['1 min ago', '2 min ago', '5 min ago', '10 min ago', '15 min ago'];
+                document.getElementById('lastOrderTime').textContent = times[Math.floor(Math.random() * times.length)];
+                
+            }, 5000);
+        }
+        
+        function flashCard(cardId) {
+            const card = document.getElementById(cardId);
+            if (!card) return;
+            
+            card.style.transform = 'scale(1.05)';
+            card.style.boxShadow = '0 0 40px rgba(255, 107, 0, 0.8)';
+            
+            setTimeout(() => {
+                card.style.transform = '';
+                card.style.boxShadow = '';
+            }, 500);
+        }
+        
+        // Simulation functions for different pages
+        function simulateItemsPageUpdate() {
+            const itemsCount = parseInt(document.getElementById('itemsCount').textContent);
+            document.getElementById('itemsCount').textContent = itemsCount + 1;
+            
+            const activeItems = parseInt(document.getElementById('activeItems').textContent);
+            document.getElementById('activeItems').textContent = activeItems + 1;
+            
+            localStorage.setItem('morningbites_itemsCount', itemsCount + 1);
+            
+            showNotification('Menu Items page updated: New item added!');
+            flashCard('itemsCountCard');
+        }
+        
+        function simulateBillingPageUpdate() {
+            const todayBills = parseInt(document.getElementById('todayBills').textContent);
+            document.getElementById('todayBills').textContent = todayBills + 1;
+            
+            const pendingOrders = parseInt(document.getElementById('pendingOrders').textContent);
+            document.getElementById('pendingOrders').textContent = pendingOrders + 1;
+            
+            showNotification('Billing page updated: New bill created!');
+            flashCard('todayBillsCard');
+            flashCard('pendingOrdersCard');
+        }
+        
+        function simulatePreviewPageUpdate() {
+            const pendingOrders = parseInt(document.getElementById('pendingOrders').textContent);
+            if (pendingOrders > 0) {
+                document.getElementById('pendingOrders').textContent = pendingOrders - 1;
+                
+                const totalSales = parseInt(document.getElementById('totalSales').textContent.replace('₹', '').replace(',', ''));
+                document.getElementById('totalSales').textContent = `₹${(totalSales + Math.floor(Math.random() * 1000) + 500).toLocaleString()}`;
+                
+                const taxCollected = parseInt(document.getElementById('taxCollected').textContent.replace('₹', '').replace(',', ''));
+                document.getElementById('taxCollected').textContent = `₹${(taxCollected + Math.floor(Math.random() * 100) + 50).toLocaleString()}`;
+                
+                showNotification('Preview page updated: Bill confirmed!');
+                flashCard('totalSalesCard');
+                flashCard('taxCollectedCard');
+            }
+        }
+        
+        function simulateSettingsPageUpdate() {
+            const newNames = [" morning bites", "morning bites", "morning bites", "morning bites"];
+            const randomName = newNames[Math.floor(Math.random() * newNames.length)];
+            
+            document.getElementById('hotelName').textContent = randomName;
+            localStorage.setItem('morningbites_hotelName', randomName);
+            
+            showNotification(`Settings updated: Restaurant name changed to "${randomName}"!`);
+        }
+        
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, var(--primary), var(--primary-light));
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+                z-index: 1000;
+                animation: slideInRight 0.3s ease;
+                max-width: 300px;
+                font-weight: 600;
+                border-left: 5px solid var(--secondary);
+                backdrop-filter: blur(10px);
+            `;
+            notification.innerHTML = `
+                <i class="fas fa-bell" style="margin-right: 10px;"></i>
+                ${message}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideInRight 0.3s ease reverse';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Add CSS for notification animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+        // to open the particular page in the separate page in .html file 
+         document.querySelectorAll('.nav-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const page = button.getAttribute('data-page');
+            window.location.href = page + ".html";
+        });
+    });
+    </script>
+</body>
+</html>

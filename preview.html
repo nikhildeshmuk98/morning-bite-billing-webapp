@@ -1,0 +1,1447 @@
+`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morning Bites | Bill Preview</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #ff6b00;
+            --primary-light: #ff9a00;
+            --secondary: #6a11cb;
+            --secondary-light: #2575fc;
+            --dark: #1a1a2e;
+            --darker: #0f0f1a;
+            --light: #f8f9fa;
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glow: rgba(255, 107, 0, 0.6);
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --danger: #f44336;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            animation: pageEnter 0.8s ease-out;
+        }
+
+        @keyframes pageEnter {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px) scale(0.95);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Background animation */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary-light) 0%, transparent 70%);
+            opacity: 0.1;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .bg-circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .bg-circle:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            top: 60%;
+            right: 10%;
+            background: radial-gradient(circle, var(--secondary-light) 0%, transparent 70%);
+            animation-delay: 5s;
+        }
+
+        .bg-circle:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            bottom: 10%;
+            left: 20%;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 25px;
+            position: relative;
+        }
+
+        .back-btn {
+            width: 60px;
+            height: 60px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--primary-light);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-right: 20px;
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .back-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .back-btn:hover::before {
+            left: 100%;
+        }
+
+        .back-btn:hover {
+            transform: translateX(-5px) scale(1.1);
+            border-color: var(--primary);
+            box-shadow: 0 10px 25px rgba(255, 107, 0, 0.4), 0 0 20px var(--glow);
+        }
+
+        .header-info {
+            flex: 1;
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 5px;
+            text-shadow: 0 5px 15px rgba(255, 106, 0, 0.3);
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+        }
+
+        /* Validation Container */
+        .validation-container {
+            max-width: 800px;
+            margin: 0 auto 40px;
+            padding: 0 25px;
+        }
+
+        .validation-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 25px;
+            animation: slideUp 0.6s ease 0.2s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .validation-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .validation-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .validation-icon.checking {
+            background: rgba(255, 152, 0, 0.2);
+            color: var(--warning);
+            border: 1px solid rgba(255, 152, 0, 0.5);
+        }
+
+        .validation-icon.success {
+            background: rgba(76, 175, 80, 0.2);
+            color: var(--success);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            animation: pulseSuccess 2s infinite;
+        }
+
+        .validation-icon.error {
+            background: rgba(244, 67, 54, 0.2);
+            color: var(--danger);
+            border: 1px solid rgba(244, 67, 54, 0.5);
+            animation: pulseError 2s infinite;
+        }
+
+        @keyframes pulseSuccess {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+        }
+
+        @keyframes pulseError {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(244, 67, 54, 0); }
+        }
+
+        .validation-content h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .validation-steps {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .validation-step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .validation-step.active {
+            background: rgba(255, 152, 0, 0.1);
+            border-color: rgba(255, 152, 0, 0.3);
+        }
+
+        .validation-step.completed {
+            background: rgba(76, 175, 80, 0.1);
+            border-color: rgba(76, 175, 80, 0.3);
+        }
+
+        .validation-step.failed {
+            background: rgba(244, 67, 54, 0.1);
+            border-color: rgba(244, 67, 54, 0.3);
+        }
+
+        .step-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .step-icon.pending {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .step-icon.completed {
+            background: var(--success);
+            color: white;
+        }
+
+        .step-icon.failed {
+            background: var(--danger);
+            color: white;
+        }
+
+        .step-text {
+            flex: 1;
+        }
+
+        .step-text h4 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .step-text p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .validation-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .proceed-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 107, 0, 0.4);
+        }
+
+        .proceed-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 0, 0.6);
+        }
+
+        .back-billing-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            color: white;
+        }
+
+        .back-billing-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Bill Preview Container */
+        .bill-preview-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 25px 50px;
+            display: none;
+        }
+
+        .bill-header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: slideUp 0.6s ease 0.4s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .bill-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .bill-header p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+        }
+
+        /* Bill Card */
+        .bill-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.6s ease 0.6s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .bill-header-strip {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bill-header-strip::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shine 3s infinite linear;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .bill-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .bill-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .bill-details {
+            padding: 35px;
+        }
+
+        .bill-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .bill-info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .bill-info-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .bill-info-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-light);
+        }
+
+        /* Items Table */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .items-table thead {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .items-table th {
+            padding: 18px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary-light);
+            border-bottom: 2px solid var(--glass-border);
+        }
+
+        .items-table tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+
+        .items-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .items-table td {
+            padding: 20px 15px;
+            vertical-align: middle;
+        }
+
+        .item-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .item-price {
+            font-weight: 700;
+            color: var(--primary-light);
+        }
+
+        .item-quantity {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(255, 152, 0, 0.1);
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        /* Bill Summary */
+        .bill-summary {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            font-size: 1.1rem;
+        }
+
+        .summary-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .summary-row.total {
+            border-top: 2px solid var(--glass-border);
+            margin-top: 10px;
+            padding-top: 20px;
+            font-size: 1.3rem;
+        }
+
+        .summary-row.total .summary-value {
+            color: var(--primary-light);
+            font-size: 1.5rem;
+        }
+
+        /* Confirmation Section */
+        .confirmation-section {
+            margin-top: 40px;
+            text-align: center;
+            animation: slideUp 0.6s ease 0.8s forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .confirmation-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 25px;
+        }
+
+        .confirm-btn, .cancel-btn {
+            padding: 18px 40px;
+            border: none;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            min-width: 200px;
+            justify-content: center;
+        }
+
+        .confirm-btn {
+            background: linear-gradient(135deg, var(--success), #2E7D32);
+            color: white;
+            box-shadow: 0 10px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        .confirm-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(76, 175, 80, 0.6);
+        }
+
+        .cancel-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            color: white;
+        }
+
+        .cancel-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        /* Success Animation */
+        .success-animation {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .success-content {
+            text-align: center;
+            background: var(--darker);
+            padding: 50px;
+            border-radius: 25px;
+            border: 1px solid var(--glass-border);
+            max-width: 600px;
+            width: 90%;
+            animation: zoomIn 0.5s ease;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--success), #2E7D32);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            margin: 0 auto 30px;
+            animation: pulseSuccess 2s infinite;
+        }
+
+        .success-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(to right, var(--success), #81C784);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .success-content p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .success-actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 50px;
+            border-top: 1px solid var(--glass-border);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, var(--primary), var(--primary-light));
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, var(--primary-light), var(--primary));
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            
+            .back-btn {
+                align-self: flex-start;
+            }
+            
+            .confirmation-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .confirm-btn, .cancel-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .validation-actions {
+                flex-direction: column;
+            }
+            
+            .items-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="bg-animation">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <button class="back-btn" id="backBtn">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="header-info">
+            <h1>Morning Bites</h1>
+            <p>Bill Preview & Confirmation</p>
+        </div>
+    </div>
+
+    <!-- Validation Container -->
+    <div class="validation-container" id="validationContainer">
+        <div class="validation-card">
+            <div class="validation-header">
+                <div class="validation-icon checking" id="validationIcon">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+                <div class="validation-content">
+                    <h2>Validating Your Bill</h2>
+                    <p>Please wait while we validate your bill details...</p>
+                </div>
+            </div>
+            
+            <ul class="validation-steps">
+                <li class="validation-step" id="loginStep">
+                    <div class="step-icon pending">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="step-text">
+                        <h4>Login Status Check</h4>
+                        <p>Verifying user authentication...</p>
+                    </div>
+                </li>
+                
+                <li class="validation-step" id="billDataStep">
+                    <div class="step-icon pending">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <div class="step-text">
+                        <h4>Bill Data Validation</h4>
+                        <p>Checking bill details and items...</p>
+                    </div>
+                </li>
+                
+                <li class="validation-step" id="paymentStep">
+                    <div class="step-icon pending">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <div class="step-text">
+                        <h4>Payment Method Check</h4>
+                        <p>Validating payment information...</p>
+                    </div>
+                </li>
+            </ul>
+            
+            <div class="validation-actions">
+                <button class="action-btn proceed-btn" id="proceedBtn" disabled>
+                    <i class="fas fa-spinner fa-spin"></i> Processing...
+                </button>
+                <button class="action-btn back-billing-btn" id="backToBillingBtn">
+                    <i class="fas fa-arrow-left"></i> Back to Billing
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bill Preview Container -->
+    <div class="bill-preview-container" id="billPreviewContainer">
+        <div class="bill-header">
+            <h2>Bill Preview</h2>
+            <p>Review your order before confirming</p>
+        </div>
+        
+        <div class="bill-card">
+            <div class="bill-header-strip">
+                <div class="bill-title">MORNING BITES</div>
+                <div class="bill-subtitle">RESTAURANT & CAFE</div>
+            </div>
+            
+            <div class="bill-details">
+                <!-- Bill Info -->
+                <div class="bill-info-grid">
+                    <div class="bill-info-item">
+                        <div class="bill-info-label">Bill Number</div>
+                        <div class="bill-info-value" id="billNumber">#MB-2023-00127</div>
+                    </div>
+                    <div class="bill-info-item">
+                        <div class="bill-info-label">Date & Time</div>
+                        <div class="bill-info-value" id="billDateTime">Loading...</div>
+                    </div>
+                    <div class="bill-info-item">
+                        <div class="bill-info-label">Table Number</div>
+                        <div class="bill-info-value" id="tableNumber">T-12</div>
+                    </div>
+                    <div class="bill-info-item">
+                        <div class="bill-info-label">Staff</div>
+                        <div class="bill-info-value" id="staffName">John (Waiter)</div>
+                    </div>
+                </div>
+                
+                <!-- Items Table -->
+                <h3 style="margin-bottom: 20px; color: var(--primary-light);">Order Items</h3>
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="billItemsBody">
+                        <!-- Bill items will be loaded here -->
+                    </tbody>
+                </table>
+                
+                <!-- Bill Summary -->
+                <div class="bill-summary">
+                    <div class="summary-row">
+                        <div class="summary-label">Subtotal</div>
+                        <div class="summary-value" id="subtotal">₹0</div>
+                    </div>
+                    <div class="summary-row">
+                        <div class="summary-label">GST (5%)</div>
+                        <div class="summary-value" id="gstAmount">₹0</div>
+                    </div>
+                    <div class="summary-row">
+                        <div class="summary-label">Service Charge (10%)</div>
+                        <div class="summary-value" id="serviceCharge">₹0</div>
+                    </div>
+                    <div class="summary-row">
+                        <div class="summary-label">Discount</div>
+                        <div class="summary-value" id="discount">-₹0</div>
+                    </div>
+                    <div class="summary-row total">
+                        <div class="summary-label">Total Amount</div>
+                        <div class="summary-value" id="totalAmount">₹0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Confirmation Section -->
+        <div class="confirmation-section">
+            <h3 style="font-size: 1.5rem; margin-bottom: 20px; color: rgba(255,255,255,0.9);">
+                Ready to confirm this order?
+            </h3>
+            <p style="color: rgba(255,255,255,0.7); margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Confirming will finalize the bill, update inventory, and add this to today's sales reports.
+            </p>
+            
+            <div class="confirmation-buttons">
+                <button class="confirm-btn" id="confirmBillBtn">
+                    <i class="fas fa-check-circle"></i> Confirm & Print Bill
+                </button>
+                <button class="cancel-btn" id="cancelBillBtn">
+                    <i class="fas fa-times-circle"></i> Cancel Order
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Animation -->
+    <div class="success-animation" id="successAnimation">
+        <div class="success-content">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2>Bill Confirmed Successfully!</h2>
+            <p>Your order has been processed and added to today's sales. The bill has been sent to the kitchen and will be printed shortly.</p>
+            <p><strong>Bill Number: <span id="successBillNumber">#MB-2023-00127</span></strong></p>
+            
+            <div class="success-actions">
+                <button class="action-btn proceed-btn" id="newBillBtn" style="margin-top: 20px;">
+                    <i class="fas fa-plus"></i> Create New Bill
+                </button>
+                <button class="action-btn back-billing-btn" id="backToDashboardBtn" style="margin-top: 20px;">
+                    <i class="fas fa-tachometer-alt"></i> Back to Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>Morning Bites Restaurant Management System • Bill Preview Page</p>
+        <p>Bill confirmation updates Dashboard, Reports, and Inventory automatically</p>
+    </div>
+
+    <script>
+        // Sample bill data
+        let billData = {
+            billNumber: "#MB-" + new Date().getFullYear() + "-" + Math.floor(10000 + Math.random() * 90000),
+            dateTime: new Date(),
+            tableNumber: "T-" + (Math.floor(Math.random() * 20) + 1),
+            staffName: "John (Waiter)",
+            customerName: "Walk-in Customer",
+            items: [],
+            subtotal: 0,
+            gst: 5,
+            serviceCharge: 10,
+            discount: 0,
+            total: 0
+        };
+
+        // Check login and bill data
+        document.addEventListener('DOMContentLoaded', function() {
+            // Start validation process
+            startValidation();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Add magical entrance effects
+            addMagicalEffects();
+        });
+        
+        function startValidation() {
+            // Step 1: Check login status
+            setTimeout(() => {
+                validateLogin();
+            }, 1000);
+        }
+        
+        function validateLogin() {
+            const loginStep = document.getElementById('loginStep');
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+            const userEmail = sessionStorage.getItem('userEmail');
+            
+            if (isLoggedIn && userEmail) {
+                // Login successful
+                loginStep.classList.remove('active');
+                loginStep.classList.add('completed');
+                loginStep.querySelector('.step-icon').className = 'step-icon completed';
+                loginStep.querySelector('.step-icon').innerHTML = '<i class="fas fa-check"></i>';
+                loginStep.querySelector('.step-text p').textContent = `Logged in as: ${userEmail}`;
+                
+                // Step 2: Check bill data
+                setTimeout(() => {
+                    validateBillData();
+                }, 800);
+            } else {
+                // Login failed
+                loginStep.classList.remove('active');
+                loginStep.classList.add('failed');
+                loginStep.querySelector('.step-icon').className = 'step-icon failed';
+                loginStep.querySelector('.step-icon').innerHTML = '<i class="fas fa-times"></i>';
+                loginStep.querySelector('.step-text p').textContent = 'User not logged in';
+                
+                // Update validation icon
+                document.getElementById('validationIcon').className = 'validation-icon error';
+                document.getElementById('validationIcon').innerHTML = '<i class="fas fa-times"></i>';
+                document.querySelector('.validation-content h2').textContent = 'Validation Failed';
+                document.querySelector('.validation-content p').textContent = 'You must be logged in to preview bills';
+                
+                // Update proceed button
+                document.getElementById('proceedBtn').innerHTML = '<i class="fas fa-exclamation-circle"></i> Login Required';
+                document.getElementById('proceedBtn').onclick = () => {
+                    window.location.href = 'login.html';
+                };
+                document.getElementById('proceedBtn').disabled = false;
+            }
+        }
+        
+        function validateBillData() {
+            const billDataStep = document.getElementById('billDataStep');
+            billDataStep.classList.add('active');
+            
+            // Simulate loading bill data from localStorage or billing page
+            setTimeout(() => {
+                // Check if there's bill data
+                const savedBill = localStorage.getItem('morningBites_currentBill');
+                
+                if (savedBill) {
+                    // Load saved bill
+                    const parsedBill = JSON.parse(savedBill);
+                    billData = { ...billData, ...parsedBill };
+                    
+                    // Check if bill has items
+                    if (billData.items && billData.items.length > 0) {
+                        billDataStep.classList.remove('active');
+                        billDataStep.classList.add('completed');
+                        billDataStep.querySelector('.step-icon').className = 'step-icon completed';
+                        billDataStep.querySelector('.step-icon').innerHTML = '<i class="fas fa-check"></i>';
+                        billDataStep.querySelector('.step-text p').textContent = `Bill loaded with ${billData.items.length} items`;
+                        
+                        // Step 3: Check payment
+                        setTimeout(() => {
+                            validatePayment();
+                        }, 800);
+                    } else {
+                        // No items in bill
+                        throwValidationError(billDataStep, 'Bill has no items. Please add items in billing page.');
+                    }
+                } else {
+                    // No bill data found
+                    throwValidationError(billDataStep, 'No bill data found. Please create a bill first.');
+                }
+            }, 1200);
+        }
+        
+        function validatePayment() {
+            const paymentStep = document.getElementById('paymentStep');
+            paymentStep.classList.add('active');
+            
+            setTimeout(() => {
+                // For demo, we'll assume payment is valid
+                paymentStep.classList.remove('active');
+                paymentStep.classList.add('completed');
+                paymentStep.querySelector('.step-icon').className = 'step-icon completed';
+                paymentStep.querySelector('.step-icon').innerHTML = '<i class="fas fa-check"></i>';
+                paymentStep.querySelector('.step-text p').textContent = 'Payment method: Cash (Default)';
+                
+                // Validation complete
+                validationComplete();
+            }, 1000);
+        }
+        
+        function throwValidationError(stepElement, errorMessage) {
+            stepElement.classList.remove('active');
+            stepElement.classList.add('failed');
+            stepElement.querySelector('.step-icon').className = 'step-icon failed';
+            stepElement.querySelector('.step-icon').innerHTML = '<i class="fas fa-times"></i>';
+            stepElement.querySelector('.step-text p').textContent = errorMessage;
+            
+            // Update validation icon
+            document.getElementById('validationIcon').className = 'validation-icon error';
+            document.getElementById('validationIcon').innerHTML = '<i class="fas fa-times"></i>';
+            document.querySelector('.validation-content h2').textContent = 'Validation Failed';
+            document.querySelector('.validation-content p').textContent = 'Please check the bill details';
+            
+            // Update proceed button
+            document.getElementById('proceedBtn').innerHTML = '<i class="fas fa-arrow-left"></i> Back to Billing';
+            document.getElementById('proceedBtn').onclick = () => {
+                window.location.href = 'billing.html';
+            };
+            document.getElementById('proceedBtn').disabled = false;
+        }
+        
+        function validationComplete() {
+            // Update validation icon
+            document.getElementById('validationIcon').className = 'validation-icon success';
+            document.getElementById('validationIcon').innerHTML = '<i class="fas fa-check"></i>';
+            document.querySelector('.validation-content h2').textContent = 'Validation Successful!';
+            document.querySelector('.validation-content p').textContent = 'Your bill is ready for preview';
+            
+            // Update proceed button
+            document.getElementById('proceedBtn').innerHTML = '<i class="fas fa-eye"></i> Preview Bill';
+            document.getElementById('proceedBtn').onclick = showBillPreview;
+            document.getElementById('proceedBtn').disabled = false;
+            
+            // Load sample items if no items in bill
+            if (billData.items.length === 0) {
+                loadSampleItems();
+            }
+            
+            // Calculate bill totals
+            calculateBillTotals();
+        }
+        
+        function loadSampleItems() {
+            // Sample items for demonstration
+            billData.items = [
+                { name: "Onion Dosa", price: 120, quantity: 2 },
+                { name: "Masala Dosa", price: 100, quantity: 1 },
+                { name: "Paneer Butter Masala", price: 280, quantity: 1 },
+                { name: "Garlic Naan", price: 60, quantity: 4 },
+                { name: "Mango Lassi", price: 80, quantity: 2 },
+                { name: "Chocolate Lava Cake", price: 120, quantity: 1 }
+            ];
+            
+            // Save to localStorage
+            localStorage.setItem('morningBites_currentBill', JSON.stringify(billData));
+        }
+        
+        function calculateBillTotals() {
+            // Calculate subtotal
+            billData.subtotal = billData.items.reduce((total, item) => {
+                return total + (item.price * item.quantity);
+            }, 0);
+            
+            // Calculate GST
+            billData.gstAmount = (billData.subtotal * billData.gst) / 100;
+            
+            // Calculate service charge
+            billData.serviceAmount = (billData.subtotal * billData.serviceCharge) / 100;
+            
+            // Calculate discount (random for demo)
+            billData.discount = Math.floor(Math.random() * 100);
+            
+            // Calculate total
+            billData.total = billData.subtotal + billData.gstAmount + billData.serviceAmount - billData.discount;
+        }
+        
+        function showBillPreview() {
+            // Hide validation container with animation
+            const validationContainer = document.getElementById('validationContainer');
+            validationContainer.style.opacity = '0';
+            validationContainer.style.transform = 'translateY(-20px)';
+            validationContainer.style.transition = 'all 0.5s ease';
+            
+            setTimeout(() => {
+                validationContainer.style.display = 'none';
+                
+                // Show bill preview with animation
+                const previewContainer = document.getElementById('billPreviewContainer');
+                previewContainer.style.display = 'block';
+                
+                // Populate bill data
+                populateBillData();
+                
+                // Add magical entrance
+                setTimeout(() => {
+                    previewContainer.style.opacity = '1';
+                }, 100);
+            }, 500);
+        }
+        
+        function populateBillData() {
+            // Set bill info
+            document.getElementById('billNumber').textContent = billData.billNumber;
+            document.getElementById('successBillNumber').textContent = billData.billNumber;
+            
+            const now = new Date();
+            document.getElementById('billDateTime').textContent = 
+                now.toLocaleDateString('en-IN') + ' • ' + now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+            
+            document.getElementById('tableNumber').textContent = billData.tableNumber;
+            document.getElementById('staffName').textContent = billData.staffName;
+            
+            // Populate items table
+            const itemsBody = document.getElementById('billItemsBody');
+            itemsBody.innerHTML = '';
+            
+            billData.items.forEach((item, index) => {
+                const row = document.createElement('tr');
+                const itemTotal = item.price * item.quantity;
+                
+                row.innerHTML = `
+                    <td>
+                        <div class="item-name">${item.name}</div>
+                    </td>
+                    <td>
+                        <div class="item-quantity">${item.quantity}</div>
+                    </td>
+                    <td>
+                        <div class="item-price">₹${item.price}</div>
+                    </td>
+                    <td>
+                        <div class="item-price">₹${itemTotal}</div>
+                    </td>
+                `;
+                
+                itemsBody.appendChild(row);
+            });
+            
+            // Set bill summary
+            document.getElementById('subtotal').textContent = `₹${billData.subtotal}`;
+            document.getElementById('gstAmount').textContent = `₹${billData.gstAmount.toFixed(2)}`;
+            document.getElementById('serviceCharge').textContent = `₹${billData.serviceAmount.toFixed(2)}`;
+            document.getElementById('discount').textContent = `-₹${billData.discount}`;
+            document.getElementById('totalAmount').textContent = `₹${billData.total.toFixed(2)}`;
+        }
+        
+        function setupEventListeners() {
+            // Back button (to dashboard)
+            document.getElementById('backBtn').addEventListener('click', function() {
+                // Add magical exit animation
+                this.style.transform = 'translateX(-20px) rotate(-360deg)';
+                document.body.style.animation = 'pageEnter 0.8s ease reverse';
+                
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 500);
+            });
+            
+            // Back to billing button
+            document.getElementById('backToBillingBtn').addEventListener('click', function() {
+                // Add magical transition
+                this.style.transform = 'scale(0.9)';
+                document.body.style.opacity = '0.8';
+                
+                setTimeout(() => {
+                    window.location.href = 'billing.html';
+                }, 300);
+            });
+            
+            // Confirm bill button
+            document.getElementById('confirmBillBtn').addEventListener('click', function() {
+                confirmBill();
+            });
+            
+            // Cancel bill button
+            document.getElementById('cancelBillBtn').addEventListener('click', function() {
+                if (confirm('Are you sure you want to cancel this order? All bill data will be lost.')) {
+                    // Clear bill data
+                    localStorage.removeItem('morningBites_currentBill');
+                    
+                    // Go back to billing
+                    window.location.href = 'billing.html';
+                }
+            });
+            
+            // New bill button (in success animation)
+            document.getElementById('newBillBtn').addEventListener('click', function() {
+                // Clear current bill
+                localStorage.removeItem('morningBites_currentBill');
+                
+                // Go to billing page
+                window.location.href = 'billing.html';
+            });
+            
+            // Back to dashboard button (in success animation)
+            document.getElementById('backToDashboardBtn').addEventListener('click', function() {
+                window.location.href = 'dashboard.html';
+            });
+        }
+        
+        function confirmBill() {
+            // Show loading on confirm button
+            const confirmBtn = document.getElementById('confirmBillBtn');
+            confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            confirmBtn.disabled = true;
+            
+            // Simulate processing
+            setTimeout(() => {
+                // Update dashboard data
+                updateDashboardData();
+                
+                // Update reports data
+                updateReportsData();
+                
+                // Show success animation
+                showSuccessAnimation();
+            }, 1500);
+        }
+        
+        function updateDashboardData() {
+            // Get current dashboard data
+            let dashboardData = {
+                totalSales: 0,
+                todayBills: 0,
+                taxCollected: 0,
+                monthlySales: 0
+            };
+            
+            const savedDashboardData = localStorage.getItem('morningBites_dashboard');
+            if (savedDashboardData) {
+                dashboardData = JSON.parse(savedDashboardData);
+            }
+            
+            // Update with current bill
+            dashboardData.totalSales += billData.total;
+            dashboardData.todayBills += 1;
+            dashboardData.taxCollected += billData.gstAmount;
+            dashboardData.monthlySales += billData.total;
+            
+            // Save updated data
+            localStorage.setItem('morningBites_dashboard', JSON.stringify(dashboardData));
+            
+            // Also update items page inventory (simulate)
+            updateInventory();
+        }
+        
+        function updateInventory() {
+            // In a real app, this would update inventory counts
+            console.log('Inventory updated for bill:', billData.billNumber);
+        }
+        
+        function updateReportsData() {
+            // Get current reports data
+            let reportsData = {
+                confirmedSales: 0,
+                totalTax: 0,
+                billsCount: 0
+            };
+            
+            const savedReportsData = localStorage.getItem('morningBites_reports');
+            if (savedReportsData) {
+                reportsData = JSON.parse(savedReportsData);
+            }
+            
+            // Update with current bill
+            reportsData.confirmedSales += billData.total;
+            reportsData.totalTax += billData.gstAmount;
+            reportsData.billsCount += 1;
+            
+            // Save updated data
+            localStorage.setItem('morningBites_reports', JSON.stringify(reportsData));
+        }
+        
+        function showSuccessAnimation() {
+            // Hide bill preview
+            document.getElementById('billPreviewContainer').style.opacity = '0';
+            document.getElementById('billPreviewContainer').style.transform = 'translateY(20px)';
+            document.getElementById('billPreviewContainer').style.transition = 'all 0.5s ease';
+            
+            setTimeout(() => {
+                document.getElementById('billPreviewContainer').style.display = 'none';
+                
+                // Show success animation
+                document.getElementById('successAnimation').style.display = 'flex';
+                
+                // Add confetti effect (simulated)
+                createConfetti();
+            }, 500);
+        }
+        
+        function createConfetti() {
+            // Simple confetti effect
+            const colors = ['#ff6b00', '#ff9a00', '#4CAF50', '#2196F3', '#9C27B0'];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.style.position = 'fixed';
+                    confetti.style.width = '10px';
+                    confetti.style.height = '10px';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = '50%';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.top = '-10px';
+                    confetti.style.zIndex = '9999';
+                    confetti.style.opacity = '0.8';
+                    
+                    document.body.appendChild(confetti);
+                    
+                    // Animate confetti
+                    const animation = confetti.animate([
+                        { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                        { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                    ], {
+                        duration: 1000 + Math.random() * 2000,
+                        easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
+                    });
+                    
+                    // Remove after animation
+                    animation.onfinish = () => {
+                        document.body.removeChild(confetti);
+                    };
+                }, i * 50);
+            }
+        }
+        
+        function addMagicalEffects() {
+            // Add glow effect to validation steps
+            const steps = document.querySelectorAll('.validation-step');
+            steps.forEach(step => {
+                step.addEventListener('mouseenter', function() {
+                    if (this.classList.contains('active')) {
+                        this.style.boxShadow = '0 0 20px rgba(255, 152, 0, 0.3)';
+                    }
+                });
+                
+                step.addEventListener('mouseleave', function() {
+                    this.style.boxShadow = 'none';
+                });
+            });
+            
+            // Add shine animation to bill header periodically
+            setInterval(() => {
+                const billHeader = document.querySelector('.bill-header-strip');
+                if (billHeader) {
+                    billHeader.style.background = 'linear-gradient(135deg, #ff6b00, #ff9a00, #ff6b00)';
+                    billHeader.style.backgroundSize = '200% 200%';
+                    billHeader.style.animation = 'shine 3s infinite linear';
+                    
+                    setTimeout(() => {
+                        if (billHeader) {
+                            billHeader.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-light))';
+                            billHeader.style.backgroundSize = 'auto';
+                        }
+                    }, 1000);
+                }
+            }, 5000);
+            
+            // Add hover effect to confirm button
+            const confirmBtn = document.getElementById('confirmBillBtn');
+            if (confirmBtn) {
+                confirmBtn.addEventListener('mouseenter', function() {
+                    this.style.boxShadow = '0 15px 35px rgba(76, 175, 80, 0.6), 0 0 30px rgba(76, 175, 80, 0.4)';
+                });
+                
+                confirmBtn.addEventListener('mouseleave', function() {
+                    this.style.boxShadow = '0 10px 25px rgba(76, 175, 80, 0.4)';
+                });
+            }
+        }
+    </script>
+</body>
+</html>

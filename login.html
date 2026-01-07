@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gourmet Gateway | Restaurant Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #0c0c14;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: #fff;
+            position: relative;
+        }
+
+        /* Cosmic Background */
+        .cosmic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -3;
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+        }
+
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 5s infinite;
+        }
+
+        /* Floating Food Particles */
+        .food-particle {
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0.3;
+            z-index: -1;
+            animation: floatParticle 20s infinite linear;
+        }
+
+        /* Magical Portal */
+        .portal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ff9a00 0%, #ff6b00 100%);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            box-shadow: 0 0 100px rgba(255, 154, 0, 0.8);
+        }
+
+        .portal-active {
+            animation: portalExpand 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* Login Container */
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            z-index: 10;
+            animation: fadeIn 1s ease-out;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #ff9a00, #ff6b00, #ff3366);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 5px 25px rgba(255, 106, 0, 0.5);
+            letter-spacing: 2px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% { text-shadow: 0 5px 25px rgba(255, 106, 0, 0.5); }
+            100% { text-shadow: 0 5px 35px rgba(255, 106, 0, 0.8), 0 0 40px rgba(255, 51, 102, 0.6); }
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            letter-spacing: 1px;
+            color: #ffcc99;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6),
+                        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+                        0 0 30px rgba(255, 154, 0, 0.2) inset;
+            padding: 45px 40px;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff9a00, #ff6b00, #ff3366, #ff9a00);
+            border-radius: 27px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .glass-card:hover::before {
+            opacity: 0.4;
+            animation: cardGlow 2s linear infinite;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8),
+                        0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+                        0 0 40px rgba(255, 154, 0, 0.3) inset;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #ffcc80;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 10px rgba(255, 154, 0, 0.3);
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        .input-container i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ff9800;
+            font-size: 1.3rem;
+            transition: all 0.3s;
+            text-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+        }
+
+        .input-container input {
+            width: 100%;
+            padding: 18px 20px 18px 60px;
+            border: none;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1.1rem;
+            transition: all 0.4s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-container input:focus {
+            outline: none;
+            border-color: #ff9800;
+            box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.2),
+                        0 10px 25px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .input-container input:focus + i {
+            color: #ff6b00;
+            text-shadow: 0 0 15px rgba(255, 107, 0, 0.8);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .input-container input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #ff9800;
+            cursor: pointer;
+            font-size: 1.3rem;
+            transition: all 0.3s;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .password-toggle:hover {
+            color: #ff6b00;
+            background: rgba(255, 152, 0, 0.1);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(to right, #ff9a00, #ff6b00, #ff3366);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-top: 10px;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 25px rgba(255, 107, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.8s;
+            z-index: -1;
+        }
+
+        .login-btn:hover::before {
+            left: 100%;
+        }
+
+        .login-btn:hover {
+            background: linear-gradient(to right, #ff8a00, #ff5a00, #ff2255);
+            box-shadow: 0 15px 35px rgba(255, 107, 0, 0.7),
+                        0 0 20px rgba(255, 154, 0, 0.4);
+            transform: translateY(-5px) scale(1.02);
+            letter-spacing: 2px;
+        }
+
+        .login-btn:active {
+            transform: translateY(0) scale(0.98);
+            transition: 0.1s;
+        }
+
+        .login-btn i {
+            margin-right: 10px;
+            animation: buttonIconPulse 2s infinite;
+        }
+
+        .message {
+            margin-top: 25px;
+            padding: 18px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+            animation: fadeIn 0.5s;
+            backdrop-filter: blur(10px);
+            border: 1px solid transparent;
+        }
+
+        .success {
+            background: rgba(76, 175, 80, 0.15);
+            border-color: rgba(76, 175, 80, 0.3);
+            color: #c8e6c9;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2);
+        }
+
+        .error {
+            background: rgba(244, 67, 54, 0.15);
+            border-color: rgba(244, 67, 54, 0.3);
+            color: #ffccbc;
+            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.2);
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes portalExpand {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(30);
+                opacity: 0;
+            }
+        }
+
+        @keyframes cardGlow {
+            0% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 0.3;
+            }
+        }
+
+        @keyframes buttonIconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2000;
+        }
+
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(255, 154, 0, 0.3);
+            border-top: 5px solid #ff9a00;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 30px rgba(255, 154, 0, 0.5);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Dashboard Entrance Animation */
+        .dashboard-entrance {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0c0c14 0%, #1a1a2e 100%);
+            z-index: 3000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .entrance-text {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #ff9a00, #ff6b00, #ff3366);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(255, 154, 0, 0.5);
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        /* Forgot Password Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            background: rgba(30, 30, 40, 0.95);
+            border-radius: 25px;
+            padding: 40px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid rgba(255, 152, 0, 0.3);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7),
+                        0 0 30px rgba(255, 154, 0, 0.2);
+            transform: scale(0.9);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-header h3 {
+            color: #ff9800;
+            font-size: 1.8rem;
+            text-shadow: 0 0 15px rgba(255, 152, 0, 0.5);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-modal:hover {
+            color: #ff9800;
+            background: rgba(255, 152, 0, 0.1);
+            transform: rotate(90deg);
+        }
+
+        .modal p {
+            margin-bottom: 20px;
+            line-height: 1.7;
+            color: #ccc;
+            font-size: 1.1rem;
+        }
+
+        .modal-btn {
+            padding: 15px 30px;
+            background: linear-gradient(to right, #ff9a00, #ff6b00);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s;
+            margin-top: 10px;
+            font-size: 1.1rem;
+            box-shadow: 0 8px 20px rgba(255, 107, 0, 0.4);
+        }
+
+        .modal-btn:hover {
+            background: linear-gradient(to right, #ff8a00, #ff5a00);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(255, 107, 0, 0.6);
+        }
+
+        @media (max-width: 500px) {
+            .login-container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .glass-card {
+                padding: 35px 25px;
+            }
+            
+            .entrance-text {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Cosmic Background -->
+    <div class="cosmic-bg"></div>
+    <div class="stars" id="stars"></div>
+    
+    <!-- Floating Food Particles -->
+    <div id="foodParticles"></div>
+    
+    <!-- Magical Portal -->
+    <div class="portal" id="portal"></div>
+    
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+    </div>
+    
+    <!-- Dashboard Entrance Animation -->
+    <div class="dashboard-entrance" id="dashboardEntrance">
+        <h1 class="entrance-text">Welcome to Dashboard</h1>
+    </div>
+    
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="header">
+            <h1>Gourmet Gateway</h1>
+            <p>Experience the magic of restaurant management</p>
+        </div>
+
+        <div class="glass-card">
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
+                    <div class="input-container">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" placeholder="chef@restaurant.com" required autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> Password</label>
+                    <div class="input-container">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" placeholder="Enter your secret password" required>
+                        <button type="button" class="password-toggle" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginButton">
+                    <i class="fas fa-magic"></i> Open Magical Dashboard
+                </button>
+
+                <div id="message" class="message"></div>
+            </form>
+
+            <div class="footer">
+                <p><i class="fas fa-star"></i> Your culinary journey begins here</p>
+                <p>© 2023 Gourmet Gateway - Restaurant Management System</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal" id="forgotModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-key"></i> Password Assistance</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <p>For security reasons, this system uses browser-based authentication.</p>
+            <p><strong>If you've forgotten your password:</strong></p>
+            <p>1. Clear your browser data (local storage) for this site</p>
+            <p>2. Refresh the page and set a new magical password</p>
+            <p>3. Remember this password for your next mystical journey</p>
+            <p><strong>Note:</strong> Your password is stored securely in your browser for convenience.</p>
+            <button class="modal-btn" id="understandBtn">I Understand the Magic</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const loginForm = document.getElementById('loginForm');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const togglePassword = document.getElementById('togglePassword');
+            const messageDiv = document.getElementById('message');
+            const loginButton = document.getElementById('loginButton');
+            const portal = document.getElementById('portal');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const dashboardEntrance = document.getElementById('dashboardEntrance');
+            const stars = document.getElementById('stars');
+            const foodParticles = document.getElementById('foodParticles');
+            
+            // Create stars
+            createStars();
+            
+            // Create floating food particles
+            createFoodParticles();
+            
+            // Check if user has a stored password
+            const storedPassword = localStorage.getItem('gourmetGatewayPassword');
+            const storedEmail = localStorage.getItem('gourmetGatewayEmail');
+            
+            // If user has previously set a password, show a hint
+            if (storedEmail) {
+                emailInput.value = storedEmail;
+                showMessage(`Welcome back, ${storedEmail.split('@')[0]}! Ready for another magical session?`, 'success');
+            }
+            
+            // Toggle password visibility
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+                
+                // Add animation effect
+                this.style.transform = 'translateY(-50%) scale(1.3)';
+                setTimeout(() => {
+                    this.style.transform = 'translateY(-50%) scale(1)';
+                }, 200);
+            });
+            
+            // Login form submission
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = emailInput.value.trim();
+                const password = passwordInput.value.trim();
+                
+                // Basic validation
+                if (!email || !password) {
+                    showMessage('Please fill in all the magical fields', 'error');
+                    shakeElement(loginForm);
+                    return;
+                }
+                
+                // Email format validation
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(email)) {
+                    showMessage('Please enter a valid magical email address', 'error');
+                    shakeElement(emailInput);
+                    return;
+                }
+                
+                // Show loading spinner
+                loadingSpinner.style.display = 'block';
+                
+                // Disable form inputs during login
+                disableForm(true);
+                
+                // If there's no stored password, this is the first login
+                if (!storedPassword) {
+                    // Store the password in localStorage
+                    localStorage.setItem('gourmetGatewayPassword', password);
+                    localStorage.setItem('gourmetGatewayEmail', email);
+                    
+                    showMessage('Magical account created! Your password has been saved securely.', 'success');
+                    
+                    // Wait a moment then start the magical transition
+                    setTimeout(() => {
+                        startMagicalTransition(email);
+                    }, 1500);
+                } 
+                // If there is a stored password, validate it
+                else {
+                    if (password === storedPassword && email === storedEmail) {
+                        showMessage('Magic password accepted! Starting your journey...', 'success');
+                        
+                        // Start the magical transition
+                        setTimeout(() => {
+                            startMagicalTransition(email);
+                        }, 1000);
+                    } else {
+                        loadingSpinner.style.display = 'none';
+                        showMessage('Incorrect magical password! Please try again.', 'error');
+                        passwordInput.value = '';
+                        passwordInput.focus();
+                        shakeElement(passwordInput);
+                        disableForm(false);
+                    }
+                }
+            });
+            
+            // Function to start the magical transition to dashboard
+            function startMagicalTransition(email) {
+                // 1. Activate the portal
+                portal.classList.add('portal-active');
+                
+                // 2. Hide the login form with animation
+                document.querySelector('.login-container').style.opacity = '0';
+                document.querySelector('.login-container').style.transform = 'scale(0.9)';
+                
+                // 3. After portal expands, show loading spinner
+                setTimeout(() => {
+                    loadingSpinner.style.display = 'block';
+                    portal.style.display = 'none';
+                    
+                    // 4. Show dashboard entrance animation
+                    setTimeout(() => {
+                        loadingSpinner.style.display = 'none';
+                        dashboardEntrance.style.opacity = '1';
+                        dashboardEntrance.style.pointerEvents = 'all';
+                        
+                        // Animate entrance text
+                        const entranceText = document.querySelector('.entrance-text');
+                        entranceText.style.opacity = '1';
+                        entranceText.style.transform = 'scale(1)';
+                        entranceText.style.transition = 'all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                        
+                        // Add glowing effect
+                        let glowIntensity = 1;
+                        const glowInterval = setInterval(() => {
+                            glowIntensity = glowIntensity === 1 ? 1.5 : 1;
+                            entranceText.style.textShadow = `0 0 ${30 * glowIntensity}px rgba(255, 154, 0, 0.7)`;
+                        }, 500);
+                        
+                        // 5. Store login state and redirect to dashboard
+                        setTimeout(() => {
+                            // Store login state in sessionStorage for other pages to check
+                            sessionStorage.setItem('isLoggedIn', 'true');
+                            sessionStorage.setItem('userEmail', email);
+                            
+                            // Clear the glow interval
+                            clearInterval(glowInterval);
+                            
+                            // Final animation before redirect
+                            entranceText.style.transform = 'scale(1.2)';
+                            entranceText.style.opacity = '0';
+                            
+                            // Redirect to dashboard.html
+                            setTimeout(() => {
+                                window.location.href = 'dashboard.html';
+                            }, 800);
+                        }, 2500);
+                    }, 1500);
+                }, 1200);
+            }
+            
+            // Function to display messages
+            function showMessage(text, type) {
+                messageDiv.textContent = text;
+                messageDiv.className = `message ${type}`;
+                messageDiv.style.display = 'block';
+                
+                // Add entrance animation
+                messageDiv.style.animation = 'none';
+                setTimeout(() => {
+                    messageDiv.style.animation = 'fadeIn 0.5s';
+                }, 10);
+                
+                // Auto-hide success messages after 5 seconds
+                if (type === 'success') {
+                    setTimeout(() => {
+                        messageDiv.style.display = 'none';
+                    }, 5000);
+                }
+            }
+            
+            // Function to shake an element
+            function shakeElement(element) {
+                element.style.animation = 'none';
+                setTimeout(() => {
+                    element.style.animation = 'shake 0.5s';
+                }, 10);
+                
+                // Create shake animation
+                const style = document.createElement('style');
+                style.innerHTML = `
+                    @keyframes shake {
+                        0%, 100% { transform: translateX(0); }
+                        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                        20%, 40%, 60%, 80% { transform: translateX(5px); }
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                // Remove the style after animation
+                setTimeout(() => {
+                    document.head.removeChild(style);
+                }, 500);
+            }
+            
+            // Function to disable/enable form
+            function disableForm(disabled) {
+                emailInput.disabled = disabled;
+                passwordInput.disabled = disabled;
+                loginButton.disabled = disabled;
+                
+                if (disabled) {
+                    loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Working Magic...';
+                    loginButton.style.opacity = '0.8';
+                } else {
+                    loginButton.innerHTML = '<i class="fas fa-magic"></i> Open Magical Dashboard';
+                    loginButton.style.opacity = '1';
+                }
+            }
+            
+            // Function to create stars
+            function createStars() {
+                for (let i = 0; i < 150; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'star';
+                    
+                    const size = Math.random() * 3 + 1;
+                    star.style.width = `${size}px`;
+                    star.style.height = `${size}px`;
+                    
+                    star.style.left = `${Math.random() * 100}%`;
+                    star.style.top = `${Math.random() * 100}%`;
+                    
+                    star.style.animationDelay = `${Math.random() * 5}s`;
+                    star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                    
+                    stars.appendChild(star);
+                }
+            }
+            
+            // Function to create floating food particles
+            function createFoodParticles() {
+                const foodIcons = ['🍕', '🍔', '🌭', '🍟', '🍗', '🍖', '🌮', '🍣', '🍜', '🍝', '🍛', '🍤', '🍦', '🍩', '🍪'];
+                
+                for (let i = 0; i < 25; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'food-particle';
+                    particle.textContent = foodIcons[Math.floor(Math.random() * foodIcons.length)];
+                    
+                    const size = Math.random() * 30 + 20;
+                    particle.style.fontSize = `${size}px`;
+                    
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.animationDelay = `${Math.random() * 20}s`;
+                    particle.style.animationDuration = `${Math.random() * 10 + 15}s`;
+                    
+                    foodParticles.appendChild(particle);
+                }
+            }
+            
+            // Add input focus effects
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'scale(1.05)';
+                    this.parentElement.style.transition = 'transform 0.3s';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'scale(1)';
+                });
+                
+                // Add typing effect
+                input.addEventListener('input', function() {
+                    if (this.value.length > 0) {
+                        this.style.boxShadow = '0 0 15px rgba(255, 152, 0, 0.3)';
+                    } else {
+                        this.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.2)';
+                    }
+                });
+            });
+            
+            // Add some random magical sparks on page load
+            setTimeout(() => {
+                createMagicSparks();
+            }, 1000);
+            
+            // Function to create magic sparks
+            function createMagicSparks() {
+                const colors = ['#ff9a00', '#ff6b00', '#ff3366', '#9c27b0'];
+                
+                for (let i = 0; i < 15; i++) {
+                    const spark = document.createElement('div');
+                    spark.style.position = 'fixed';
+                    spark.style.width = '4px';
+                    spark.style.height = '4px';
+                    spark.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    spark.style.borderRadius = '50%';
+                    spark.style.pointerEvents = 'none';
+                    spark.style.zIndex = '9999';
+                    spark.style.boxShadow = '0 0 10px currentColor';
+                    
+                    // Random starting position
+                    const startX = Math.random() * window.innerWidth;
+                    const startY = Math.random() * window.innerHeight;
+                    spark.style.left = `${startX}px`;
+                    spark.style.top = `${startY}px`;
+                    
+                    document.body.appendChild(spark);
+                    
+                    // Animate spark
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = Math.random() * 100 + 50;
+                    const duration = Math.random() * 1000 + 500;
+                    
+                    spark.animate([
+                        { transform: `translate(0, 0)`, opacity: 1 },
+                        { transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`, opacity: 0 }
+                    ], {
+                        duration: duration,
+                        easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
+                    });
+                    
+                    // Remove spark after animation
+                    setTimeout(() => {
+                        if (spark.parentNode) {
+                            spark.parentNode.removeChild(spark);
+                        }
+                    }, duration);
+                }
+            }
+            
+            // Add some interactive background effects
+            document.addEventListener('mousemove', function(e) {
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                
+                // Move stars slightly with mouse
+                stars.style.transform = `translate(${x * 10}px, ${y * 10}px)`;
+                
+                // Create occasional sparks near cursor
+                if (Math.random() > 0.97) {
+                    const spark = document.createElement('div');
+                    spark.style.position = 'fixed';
+                    spark.style.width = '3px';
+                    spark.style.height = '3px';
+                    spark.style.backgroundColor = '#ff9a00';
+                    spark.style.borderRadius = '50%';
+                    spark.style.pointerEvents = 'none';
+                    spark.style.zIndex = '9999';
+                    spark.style.left = `${e.clientX + (Math.random() * 20 - 10)}px`;
+                    spark.style.top = `${e.clientY + (Math.random() * 20 - 10)}px`;
+                    spark.style.boxShadow = '0 0 8px #ff9a00';
+                    
+                    document.body.appendChild(spark);
+                    
+                    // Animate and remove spark
+                    spark.animate([
+                        { transform: 'scale(1)', opacity: 1 },
+                        { transform: 'scale(0)', opacity: 0 }
+                    ], {
+                        duration: 500,
+                        easing: 'ease-out'
+                    });
+                    
+                    setTimeout(() => {
+                        if (spark.parentNode) {
+                            spark.parentNode.removeChild(spark);
+                        }
+                    }, 500);
+                }
+            });
+            
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Ctrl+Enter to submit form
+                if (e.ctrlKey && e.key === 'Enter') {
+                    loginForm.dispatchEvent(new Event('submit'));
+                }
+                
+                // Escape to clear form
+                if (e.key === 'Escape') {
+                    emailInput.value = '';
+                    passwordInput.value = '';
+                    emailInput.focus();
+                    showMessage('Form cleared! Start fresh.', 'success');
+                }
+            });
+            
+            // Add welcome message in console
+            console.log('%c✨ Welcome to Morning Bites ✨', 'font-size: 20px; color: #ff9a00; font-weight: bold;');
+            console.log('%cExperience the magic of restaurant management!', 'font-size: 14px; color: #ffcc80;');
+        });
+    </script>
+</body>
+</html>

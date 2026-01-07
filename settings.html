@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Settings | Anedi Hotel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #1abc9c;
+            --light: #f8f9fa;
+            --dark: #2c3e50;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --radius: 10px;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary), #1a2530);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .hotel-logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, var(--accent), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: var(--shadow);
+        }
+
+        .hotel-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hotel-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .hotel-status {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .gst-badge {
+            background-color: var(--accent);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .gst-badge.hidden {
+            display: none;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-profile:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--secondary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        /* Settings Container */
+        .settings-container {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .back-btn:hover {
+            background-color: var(--light);
+            transform: translateX(-3px);
+        }
+
+        .back-btn i {
+            font-size: 1.2rem;
+        }
+
+        .settings-title {
+            font-size: 2.2rem;
+            color: var(--primary);
+            font-weight: 800;
+            text-align: center;
+            flex: 1;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Settings Card */
+        .settings-card {
+            background-color: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .settings-card h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .settings-card h2 i {
+            color: var(--accent);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #f8f9fa;
+            padding: 1.2rem;
+            border-radius: var(--radius);
+            border: 2px solid #e1e5e9;
+        }
+
+        .toggle-label {
+            font-weight: 600;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-label i {
+            color: var(--accent);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--accent);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+
+        /* Save Button */
+        .save-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 2.5rem;
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: var(--radius);
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(26, 188, 156, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(26, 188, 156, 0.4);
+        }
+
+        .save-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Settings Preview */
+        .settings-preview {
+            background-color: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-top: 2rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .preview-title {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .preview-title i {
+            color: var(--secondary);
+        }
+
+        .preview-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1.5rem;
+            background-color: #f8fafc;
+            border-radius: var(--radius);
+            border: 2px dashed #d1d8e0;
+        }
+
+        .preview-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .preview-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e8f4fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--secondary);
+        }
+
+        .preview-text {
+            flex: 1;
+        }
+
+        .preview-label {
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .preview-value {
+            font-weight: 600;
+            color: #333;
+            margin-top: 3px;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--success);
+            color: white;
+            padding: 16px 24px;
+            border-radius: var(--radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast i {
+            font-size: 1.3rem;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .settings-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .settings-title {
+                text-align: left;
+                font-size: 1.8rem;
+            }
+            
+            .settings-container {
+                padding: 1.5rem;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        /* Animation for page load */
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .settings-container {
+            animation: slideIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Dashboard Header (Updated by settings) -->
+    <header class="dashboard-header" id="dashboardHeader">
+        <div class="logo-container">
+            <div class="hotel-logo">AH</div>
+            <div class="hotel-info">
+                <div class="hotel-name" id="hotelNameHeader">Anedi Hotel</div>
+                <div class="hotel-status">
+                    <span>Settings Updated</span>
+                    <div class="gst-badge hidden" id="gstBadge">
+                        <i class="fas fa-file-invoice-dollar"></i> GST Registered
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="header-actions">
+            <div class="user-profile">
+                <div class="user-avatar">OP</div>
+                <div class="user-info">
+                    <div class="user-name">Owner</div>
+                    <div class="user-role">Hotel Owner</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Settings Page Content -->
+    <main class="settings-container">
+        <div class="settings-header">
+            <button class="back-btn" id="backButton">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </button>
+            <h1 class="settings-title">
+                <i class="fas fa-cogs"></i> Hotel Configuration Settings
+            </h1>
+        </div>
+
+        <!-- Settings Form -->
+        <div class="settings-card">
+            <h2><i class="fas fa-hotel"></i> Hotel Details</h2>
+            
+            <div class="form-group">
+                <label class="form-label" for="hotelName">Hotel Name</label>
+                <input type="text" id="hotelName" class="form-input" placeholder="Enter your hotel name" value="Anedi Hotel">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="hotelAddress">Hotel Address</label>
+                <input type="text" id="hotelAddress" class="form-input" placeholder="Enter your hotel address" value="123 Luxury Street, Mumbai, India">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="hotelPhone">Contact Phone</label>
+                    <input type="tel" id="hotelPhone" class="form-input" placeholder="Enter contact number" value="+91 98765 43210">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="hotelEmail">Contact Email</label>
+                    <input type="email" id="hotelEmail" class="form-input" placeholder="Enter contact email" value="info@anedihotel.com">
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-card">
+            <h2><i class="fas fa-file-invoice-dollar"></i> Tax & Identification</h2>
+            
+            <div class="toggle-container">
+                <div class="toggle-label">
+                    <i class="fas fa-rupee-sign"></i> Enable GST
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="gstToggle" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            
+            <div class="form-group" id="gstNumberGroup">
+                <label class="form-label" for="gstNumber">GST Number</label>
+                <input type="text" id="gstNumber" class="form-input" placeholder="Enter GST number" value="27ABCDE1234F1Z5">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="panNumber">PAN Number</label>
+                    <input type="text" id="panNumber" class="form-input" placeholder="Enter PAN number" value="ABCDE1234F">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="fssaiNumber">FSSAI License Number</label>
+                    <input type="text" id="fssaiNumber" class="form-input" placeholder="Enter FSSAI number" value="11223344000199">
+                </div>
+            </div>
+        </div>
+
+        <div class="save-container">
+            <button class="save-btn" id="saveButton">
+                <i class="fas fa-save"></i> Save Settings
+            </button>
+        </div>
+
+        <!-- Settings Preview -->
+        <div class="settings-preview">
+            <h3 class="preview-title"><i class="fas fa-eye"></i> Settings Preview</h3>
+            <div class="preview-content">
+                <div class="preview-item">
+                    <div class="preview-icon">
+                        <i class="fas fa-hotel"></i>
+                    </div>
+                    <div class="preview-text">
+                        <div class="preview-label">Hotel Name</div>
+                        <div class="preview-value" id="previewHotelName">Anedi Hotel</div>
+                    </div>
+                </div>
+                
+                <div class="preview-item">
+                    <div class="preview-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="preview-text">
+                        <div class="preview-label">Hotel Address</div>
+                        <div class="preview-value" id="previewHotelAddress">123 Luxury Street, Mumbai, India</div>
+                    </div>
+                </div>
+                
+                <div class="preview-item">
+                    <div class="preview-icon">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <div class="preview-text">
+                        <div class="preview-label">GST Status</div>
+                        <div class="preview-value" id="previewGstStatus">Enabled (27ABCDE1234F1Z5)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span>Settings saved successfully!</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Anedi Hotel Management System &copy; 2023. All rights reserved.</p>
+        <p>Settings configuration page - Master control for hotel identity</p>
+    </footer>
+
+    <script>
+        //back button
+          document.getElementById("backButton").addEventListener("click", function () {
+        window.location.href = "dashboard.html";
+    });
+        // DOM elements
+        const backButton = document.getElementById('backButton');
+        const saveButton = document.getElementById('saveButton');
+        const gstToggle = document.getElementById('gstToggle');
+        const gstNumberGroup = document.getElementById('gstNumberGroup');
+        const gstNumberInput = document.getElementById('gstNumber');
+        const toast = document.getElementById('toast');
+        
+        // Header elements
+        const hotelNameHeader = document.getElementById('hotelNameHeader');
+        const gstBadge = document.getElementById('gstBadge');
+        
+        // Form inputs
+        const hotelNameInput = document.getElementById('hotelName');
+        const hotelAddressInput = document.getElementById('hotelAddress');
+        const hotelPhoneInput = document.getElementById('hotelPhone');
+        const hotelEmailInput = document.getElementById('hotelEmail');
+        const panNumberInput = document.getElementById('panNumber');
+        const fssaiNumberInput = document.getElementById('fssaiNumber');
+        
+        // Preview elements
+        const previewHotelName = document.getElementById('previewHotelName');
+        const previewHotelAddress = document.getElementById('previewHotelAddress');
+        const previewGstStatus = document.getElementById('previewGstStatus');
+
+        // Check login status silently (simulated)
+        function checkLoginStatus() {
+            // In a real app, this would check cookies/localStorage/tokens
+            console.log("Login status checked silently - user is authenticated");
+            return true; // User is logged in
+        }
+
+        // Load saved settings from localStorage
+        function loadSettings() {
+            if (localStorage.getItem('hotelSettings')) {
+                const settings = JSON.parse(localStorage.getItem('hotelSettings'));
+                
+                hotelNameInput.value = settings.hotelName || '';
+                hotelAddressInput.value = settings.hotelAddress || '';
+                hotelPhoneInput.value = settings.hotelPhone || '';
+                hotelEmailInput.value = settings.hotelEmail || '';
+                gstToggle.checked = settings.gstEnabled || false;
+                gstNumberInput.value = settings.gstNumber || '';
+                panNumberInput.value = settings.panNumber || '';
+                fssaiNumberInput.value = settings.fssaiNumber || '';
+                
+                // Update header with saved settings
+                updateHeader();
+                
+                // Update preview
+                updatePreview();
+            }
+            
+            // Check login status on page load
+            checkLoginStatus();
+        }
+
+        // Update header with current settings
+        function updateHeader() {
+            const hotelName = hotelNameInput.value || 'Anedi Hotel';
+            const gstEnabled = gstToggle.checked;
+            
+            hotelNameHeader.textContent = hotelName;
+            
+            if (gstEnabled) {
+                gstBadge.classList.remove('hidden');
+            } else {
+                gstBadge.classList.add('hidden');
+            }
+        }
+
+        // Update preview section
+        function updatePreview() {
+            previewHotelName.textContent = hotelNameInput.value || 'Not set';
+            previewHotelAddress.textContent = hotelAddressInput.value || 'Not set';
+            
+            if (gstToggle.checked && gstNumberInput.value) {
+                previewGstStatus.textContent = `Enabled (${gstNumberInput.value})`;
+            } else if (gstToggle.checked) {
+                previewGstStatus.textContent = 'Enabled (No GST number)';
+            } else {
+                previewGstStatus.textContent = 'Disabled';
+            }
+        }
+
+        // Handle GST toggle
+        function handleGstToggle() {
+            if (gstToggle.checked) {
+                gstNumberGroup.style.display = 'block';
+                gstNumberGroup.style.animation = 'fadeIn 0.3s ease-out';
+            } else {
+                gstNumberGroup.style.display = 'none';
+            }
+            updatePreview();
+        }
+
+        // Show toast notification
+        function showToast(message) {
+            toast.querySelector('span').textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Save settings to localStorage
+        function saveSettings() {
+            const settings = {
+                hotelName: hotelNameInput.value,
+                hotelAddress: hotelAddressInput.value,
+                hotelPhone: hotelPhoneInput.value,
+                hotelEmail: hotelEmailInput.value,
+                gstEnabled: gstToggle.checked,
+                gstNumber: gstNumberInput.value,
+                panNumber: panNumberInput.value,
+                fssaiNumber: fssaiNumberInput.value,
+                lastUpdated: new Date().toISOString()
+            };
+            
+            localStorage.setItem('hotelSettings', JSON.stringify(settings));
+            
+            // Update header and preview
+            updateHeader();
+            updatePreview();
+            
+            // Show success message
+            showToast('Settings saved successfully! Changes applied across the application.');
+            
+            // Simulate updating other parts of the app
+            console.log('Settings saved to browser memory:', settings);
+            console.log('All pages will now reflect these changes:');
+            console.log('- Hotel name updated in header');
+            console.log('- GST badge ' + (settings.gstEnabled ? 'shown' : 'hidden'));
+            console.log('- Other identification info updated');
+        }
+
+        // Event Listeners
+        backButton.addEventListener('click', function() {
+            // In a real app, this would navigate back to dashboard.html
+            alert('Navigating back to Dashboard page...');
+            console.log('Redirecting to dashboard.html');
+            // window.location.href = 'dashboard.html';
+        });
+
+        saveButton.addEventListener('click', saveSettings);
+
+        gstToggle.addEventListener('change', handleGstToggle);
+
+        // Update preview when form inputs change
+        const formInputs = document.querySelectorAll('.form-input');
+        formInputs.forEach(input => {
+            input.addEventListener('input', updatePreview);
+        });
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSettings();
+            handleGstToggle(); // Set initial state for GST field
+            console.log('Settings page loaded successfully');
+            console.log('This is the master configuration page for Anedi Hotel');
+            console.log('All identity and behavior settings are controlled from here');
+        });
+
+        // Add some interactive effects
+        saveButton.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-3px)';
+        });
+        
+        saveButton.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    </script>
+</body>
+</html>

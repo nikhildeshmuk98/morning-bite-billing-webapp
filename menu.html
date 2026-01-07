@@ -1,0 +1,945 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiffin Items Management | Delicious Meals</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #e67e22;
+            --secondary-color: #d35400;
+            --accent-color: #f39c12;
+            --light-color: #fef9f3;
+            --dark-color: #2c3e50;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f1c40f;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fff8f0 0%, #ffe8cc 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--dark-color);
+            overflow-x: hidden;
+        }
+
+        /* Magic opening animation */
+        @keyframes magicalEntrance {
+            0% { 
+                opacity: 0;
+                transform: translateY(50px) scale(0.95);
+                filter: blur(5px);
+            }
+            100% { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(30px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(230, 126, 34, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(230, 126, 34, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(230, 126, 34, 0); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            animation: magicalEntrance 0.8s ease-out forwards;
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: cover;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            z-index: 1;
+            animation: pulse 2s infinite;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+        }
+
+        .header-content {
+            z-index: 1;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header h1 i {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: flex;
+            gap: 15px;
+            z-index: 1;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 10px 20px;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Form Styles */
+        .form-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            animation: slideInRight 0.6s ease-out 0.3s both;
+            border: 1px solid #ffe8cc;
+        }
+
+        .form-container h2 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-container h2 i {
+            color: var(--accent-color);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #f0e6d6;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: #fffcf9;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(230, 126, 34, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f9f1e7;
+            color: var(--dark-color);
+            border: 1px solid #f0e6d6;
+        }
+
+        .btn-secondary:hover {
+            background: #f0e6d6;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        /* Items List Styles */
+        .items-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.8s ease-out 0.5s both;
+            border: 1px solid #ffe8cc;
+        }
+
+        .items-container h2 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .items-container h2 i {
+            color: var(--accent-color);
+        }
+
+        .items-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .item-card {
+            background: #fef9f3;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid var(--primary-color);
+            transition: var(--transition);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #ffe8cc;
+        }
+
+        .item-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .item-info h3 {
+            color: var(--dark-color);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .item-info p {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .item-price {
+            font-weight: bold;
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+        }
+
+        .item-category {
+            display: inline-block;
+            background: rgba(230, 126, 34, 0.1);
+            color: var(--primary-color);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .item-actions button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .edit-btn {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--success-color);
+        }
+
+        .edit-btn:hover {
+            background: rgba(39, 174, 96, 0.2);
+        }
+
+        .delete-btn {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+        }
+
+        .delete-btn:hover {
+            background: rgba(231, 76, 60, 0.2);
+        }
+
+        /* Footer Styles */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: auto;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+            color: var(--primary-color);
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            padding: 15px 25px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: var(--success-color);
+        }
+
+        .notification.error {
+            background: var(--danger-color);
+        }
+
+        .notification.info {
+            background: var(--secondary-color);
+        }
+
+        /* Login redirect overlay */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .login-overlay h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-overlay p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 30px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Food Icons */
+        .food-icon {
+            color: var(--primary-color);
+        }
+
+        /* Custom Scrollbar */
+        .items-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .items-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .items-list::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 10px;
+        }
+
+        .items-list::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Check Overlay (will be hidden if user is logged in) -->
+    <div id="loginOverlay" class="login-overlay">
+        <div class="spinner"></div>
+        <h1><i class="fas fa-utensils"></i> Tiffin Shop</h1>
+        <p>Checking authentication for your tiffin shop management...</p>
+        <p id="redirectMessage" style="font-size: 1rem; opacity: 0.8; margin-top: 20px;">
+            Redirecting to login if not authenticated
+        </p>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Main Content (will be shown if user is logged in) -->
+    <div class="container" id="mainContainer" style="display: none;">
+        <!-- Header -->
+        <header class="header">
+            <button class="back-btn" id="backBtn">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            
+            <div class="header-content">
+                <h1><i class="fas fa-utensils food-icon"></i> Tiffin Items Management</h1>
+                <p>Manage your delicious tiffins and meals with ease</p>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="totalItems">0</span>
+                    <span class="stat-label">Total Items</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="totalValue">₹0</span>
+                    <span class="stat-label">Total Value</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Add/Edit Item Form -->
+            <section class="form-container">
+                <h2><i class="fas fa-plus-circle"></i> <span id="formTitle">Add New Tiffin Item</span></h2>
+                <form id="itemForm">
+                    <div class="form-group">
+                        <label for="itemName"><i class="fas fa-utensil-spoon"></i> Item Name</label>
+                        <input type="text" id="itemName" class="form-control" placeholder="e.g., Veg Biryani, Chicken Curry" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="itemDescription"><i class="fas fa-align-left"></i> Description</label>
+                        <textarea id="itemDescription" class="form-control" rows="3" placeholder="Describe your delicious tiffin item..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="itemPrice"><i class="fas fa-rupee-sign"></i> Price (₹)</label>
+                        <input type="number" id="itemPrice" class="form-control" step="1" min="0" placeholder="e.g., 120" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="itemQuantity"><i class="fas fa-box"></i> Quantity Available</label>
+                        <input type="number" id="itemQuantity" class="form-control" min="0" placeholder="e.g., 50" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="itemCategory"><i class="fas fa-tags"></i> Category</label>
+                        <select id="itemCategory" class="form-control">
+                            <option value="Veg Tiffin">Veg Tiffin</option>
+                            <option value="Non-Veg Tiffin">Non-Veg Tiffin</option>
+                            <option value="Special Meals">Special Meals</option>
+                            <option value="Breakfast">Breakfast</option>
+                            <option value="Lunch">Lunch</option>
+                            <option value="Dinner">Dinner</option>
+                            <option value="Snacks">Snacks</option>
+                            <option value="Beverages">Beverages</option>
+                            <option value="Combos">Combos</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <i class="fas fa-save"></i> Add Item
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="cancelBtn" style="display: none;">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button type="reset" class="btn btn-secondary">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Items List -->
+            <section class="items-container">
+                <h2><i class="fas fa-list"></i> Tiffin Items Menu</h2>
+                <div class="items-list" id="itemsList">
+                    <!-- Items will be dynamically added here -->
+                    <div class="empty-state">
+                        <i class="fas fa-utensils"></i>
+                        <h3>No tiffin items yet</h3>
+                        <p>Add your first delicious item using the form on the left</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Tiffin Shop Management System &copy; 2023 | Connected to <a href="dashboard.html">Dashboard</a>, <a href="billing.html">Billing</a>, and <a href="reports.html">Reports</a></p>
+            <p>All your tiffin items data is securely stored in your browser's local storage</p>
+        </footer>
+    </div>
+
+    <script>
+        // Simulate user login check (in real app, this would be a proper authentication check)
+        let userLoggedIn = true; // Change to false to test redirect
+        let currentEditId = null;
+        
+        // DOM Elements
+        const loginOverlay = document.getElementById('loginOverlay');
+        const mainContainer = document.getElementById('mainContainer');
+        const backBtn = document.getElementById('backBtn');
+        const itemForm = document.getElementById('itemForm');
+        const itemsList = document.getElementById('itemsList');
+        const formTitle = document.getElementById('formTitle');
+        const submitBtn = document.getElementById('submitBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const totalItemsEl = document.getElementById('totalItems');
+        const totalValueEl = document.getElementById('totalValue');
+        const notification = document.getElementById('notification');
+        
+        // Sample tiffin shop items data
+        let items = JSON.parse(localStorage.getItem('tiffinShopItems')) || [
+            { id: 1, name: "Veg Biryani", description: "Flavorful basmati rice with mixed vegetables and spices", price: 120, quantity: 25, category: "Veg Tiffin" },
+            { id: 2, name: "Chicken Curry", description: "Spicy chicken curry with traditional Indian masala", price: 150, quantity: 18, category: "Non-Veg Tiffin" },
+            { id: 3, name: "Paneer Butter Masala", description: "Cottage cheese in rich creamy tomato gravy", price: 140, quantity: 22, category: "Veg Tiffin" },
+            { id: 4, name: "Fish Fry Meal", description: "Crispy fried fish with rice and curry", price: 180, quantity: 12, category: "Special Meals" },
+            { id: 5, name: "Idli Sambar", description: "Steamed rice cakes with lentil soup", price: 60, quantity: 35, category: "Breakfast" },
+            { id: 6, name: "Mutton Biryani", description: "Aromatic rice with tender mutton pieces", price: 200, quantity: 15, category: "Non-Veg Tiffin" }
+        ];
+        
+        // Initialize the page
+        function init() {
+            // Check if user is logged in (simulated)
+            setTimeout(() => {
+                if (userLoggedIn) {
+                    // User is logged in, show the main content
+                    loginOverlay.style.display = 'none';
+                    mainContainer.style.display = 'block';
+                    
+                    // Load items from localStorage
+                    loadItemsFromStorage();
+                    
+                    // Render items
+                    renderItems();
+                    
+                    // Update stats
+                    updateStats();
+                    
+                    // Show welcome notification
+                    showNotification('Welcome to Tiffin Shop Management! 🍛', 'success');
+                } else {
+                    // User is not logged in, redirect to login page
+                    showNotification('Please login to access tiffin shop management', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                }
+            }, 1500); // Simulate authentication check delay
+        }
+        
+        // Load items from localStorage
+        function loadItemsFromStorage() {
+            const storedItems = localStorage.getItem('tiffinShopItems');
+            if (storedItems) {
+                items = JSON.parse(storedItems);
+            }
+        }
+        
+        // Save items to localStorage
+        function saveItemsToStorage() {
+            localStorage.setItem('tiffinShopItems', JSON.stringify(items));
+        }
+        
+        // Get icon for category
+        function getCategoryIcon(category) {
+            const icons = {
+                'Veg Tiffin': 'fas fa-leaf',
+                'Non-Veg Tiffin': 'fas fa-drumstick-bite',
+                'Special Meals': 'fas fa-crown',
+                'Breakfast': 'fas fa-egg',
+                'Lunch': 'fas fa-utensils',
+                'Dinner': 'fas fa-moon',
+                'Snacks': 'fas fa-cookie-bite',
+                'Beverages': 'fas fa-coffee',
+                'Combos': 'fas fa-box'
+            };
+            return icons[category] || 'fas fa-tag';
+        }
+        
+        // Get icon for item
+        function getItemIcon(name) {
+            const lowerName = name.toLowerCase();
+            if (lowerName.includes('biryani')) return 'fas fa-mortar-pestle';
+            if (lowerName.includes('curry')) return 'fas fa-utensil-spoon';
+            if (lowerName.includes('paneer')) return 'fas fa-cheese';
+            if (lowerName.includes('chicken')) return 'fas fa-drumstick-bite';
+            if (lowerName.includes('fish')) return 'fas fa-fish';
+            if (lowerName.includes('mutton')) return 'fas fa-bacon';
+            if (lowerName.includes('idli')) return 'fas fa-blender';
+            if (lowerName.includes('rice')) return 'fas fa-seedling';
+            return 'fas fa-utensils';
+        }
+        
+        // Render items list
+        function renderItems() {
+            if (items.length === 0) {
+                itemsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-utensils"></i>
+                        <h3>No tiffin items yet</h3>
+                        <p>Add your first delicious item using the form on the left</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            itemsList.innerHTML = items.map(item => `
+                <div class="item-card" data-id="${item.id}">
+                    <div class="item-info">
+                        <h3><i class="${getItemIcon(item.name)}"></i> ${item.name}</h3>
+                        <p>${item.description}</p>
+                        <p>Quantity Available: ${item.quantity}</p>
+                        <span class="item-category"><i class="${getCategoryIcon(item.category)}"></i> ${item.category}</span>
+                    </div>
+                    <div class="item-right">
+                        <div class="item-price">₹${item.price}</div>
+                        <div class="item-actions">
+                            <button class="edit-btn" onclick="editItem(${item.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="delete-btn" onclick="deleteItem(${item.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Update statistics
+        function updateStats() {
+            const totalItems = items.length;
+            const totalValue = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            totalItemsEl.textContent = totalItems;
+            totalValueEl.textContent = `₹${totalValue}`;
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'info') {
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Handle form submission
+        itemForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('itemName').value;
+            const description = document.getElementById('itemDescription').value;
+            const price = parseInt(document.getElementById('itemPrice').value);
+            const quantity = parseInt(document.getElementById('itemQuantity').value);
+            const category = document.getElementById('itemCategory').value;
+            
+            if (currentEditId) {
+                // Edit existing item
+                const itemIndex = items.findIndex(item => item.id === currentEditId);
+                items[itemIndex] = {
+                    ...items[itemIndex],
+                    name,
+                    description,
+                    price,
+                    quantity,
+                    category
+                };
+                
+                showNotification(`Tiffin item "${name}" updated successfully! 🍽️`, 'success');
+                currentEditId = null;
+                
+                // Reset form to add mode
+                formTitle.textContent = 'Add New Tiffin Item';
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Add Item';
+                cancelBtn.style.display = 'none';
+            } else {
+                // Add new item
+                const newItem = {
+                    id: Date.now(), // Simple unique ID
+                    name,
+                    description,
+                    price,
+                    quantity,
+                    category,
+                    createdAt: new Date().toISOString()
+                };
+                
+                items.push(newItem);
+                showNotification(`Tiffin item "${name}" added successfully! 🎉`, 'success');
+            }
+            
+            // Save to localStorage
+            saveItemsToStorage();
+            
+            // Reset form
+            itemForm.reset();
+            
+            // Re-render items and update stats
+            renderItems();
+            updateStats();
+        });
+        
+        // Edit item
+        window.editItem = function(id) {
+            const item = items.find(item => item.id === id);
+            if (!item) return;
+            
+            // Fill form with item data
+            document.getElementById('itemName').value = item.name;
+            document.getElementById('itemDescription').value = item.description;
+            document.getElementById('itemPrice').value = item.price;
+            document.getElementById('itemQuantity').value = item.quantity;
+            document.getElementById('itemCategory').value = item.category;
+            
+            // Change form to edit mode
+            currentEditId = id;
+            formTitle.textContent = 'Edit Tiffin Item';
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Item';
+            cancelBtn.style.display = 'flex';
+            
+            // Scroll to form
+            document.querySelector('.form-container').scrollIntoView({ behavior: 'smooth' });
+            
+            showNotification(`Editing "${item.name}"`, 'info');
+        };
+        
+        // Delete item
+        window.deleteItem = function(id) {
+            const item = items.find(item => item.id === id);
+            if (!item) return;
+            
+            if (confirm(`Are you sure you want to delete "${item.name}" from your tiffin menu?`)) {
+                items = items.filter(item => item.id !== id);
+                
+                // Save to localStorage
+                saveItemsToStorage();
+                
+                // Re-render items and update stats
+                renderItems();
+                updateStats();
+                
+                showNotification(`Tiffin item "${item.name}" deleted successfully!`, 'success');
+                
+                // If we were editing this item, cancel edit mode
+                if (currentEditId === id) {
+                    cancelEdit();
+                }
+            }
+        };
+        
+        // Cancel edit
+        cancelBtn.addEventListener('click', cancelEdit);
+        
+        function cancelEdit() {
+            currentEditId = null;
+            formTitle.textContent = 'Add New Tiffin Item';
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Add Item';
+            cancelBtn.style.display = 'none';
+            itemForm.reset();
+            showNotification('Edit cancelled', 'info');
+        }
+        
+        // Back button to dashboard
+        backBtn.addEventListener('click', function() {
+            // Add a smooth transition effect
+            document.body.style.opacity = '0.8';
+            document.body.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 300);
+        });
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
